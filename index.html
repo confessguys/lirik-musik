@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Lirik Lagu</title>
+
   <style>
     body {
       margin: 0;
@@ -11,7 +12,6 @@
       justify-content: center;
       align-items: center;
 
-      /* background merah + gambar */
       background: linear-gradient(rgba(150,0,0,0.7), rgba(150,0,0,0.7)),
                   url('bg.jpg');
       background-size: cover;
@@ -23,7 +23,7 @@
     }
 
     h1 {
-      font-size: 40px;
+      font-size: 38px;
       margin-bottom: 20px;
       text-shadow: 0 0 15px white;
     }
@@ -31,8 +31,9 @@
     .lyrics {
       font-size: 22px;
       min-height: 60px;
-      transition: opacity 1s ease;
       opacity: 0;
+      transform: scale(0.9);
+      transition: all 0.8s ease;
     }
 
     audio {
@@ -63,24 +64,27 @@ const lyrics = [
 const audio = document.getElementById("audio");
 const display = document.getElementById("lyrics");
 
-audio.ontimeupdate = () => {
+audio.addEventListener("timeupdate", () => {
   let current = audio.currentTime;
 
   for (let i = 0; i < lyrics.length; i++) {
-    if (current >= lyrics[i].time && 
+    if (current >= lyrics[i].time &&
        (i === lyrics.length - 1 || current < lyrics[i+1].time)) {
-      
+
       if (display.innerText !== lyrics[i].text) {
+
         display.style.opacity = 0;
+        display.style.transform = "scale(0.9)";
 
         setTimeout(() => {
           display.innerText = lyrics[i].text;
           display.style.opacity = 1;
+          display.style.transform = "scale(1)";
         }, 300);
       }
     }
   }
-};
+});
 </script>
 
 </body>
