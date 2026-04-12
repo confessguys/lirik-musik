@@ -59,19 +59,24 @@
   </audio>
 
   <script>
-    let lines = document.querySelectorAll(".lyrics p");
-    let i = 0;
+    document.addEventListener("DOMContentLoaded", function() {
+      let lines = document.querySelectorAll(".lyrics p");
+      let i = 0;
 
-    function showLine() {
-      if (i < lines.length) {
-        lines[i].classList.add("show");
-        i++;
-        setTimeout(showLine, 3000); // waktu tiap lirik (3 detik)
+      function showLine() {
+        if (i < lines.length) {
+          lines[i].classList.add("show");
+          i++;
+          setTimeout(showLine, 3000);
+        }
       }
-    }
 
-    showLine();
+      showLine();
+    });
   </script>
+
+</body>
+</html>  </script>
 
 </body>
 </html>
