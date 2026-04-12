@@ -20,20 +20,10 @@
       text-shadow: 0 0 10px white;
     }
 
-    .lyrics p {
-      display: none;
-      font-size: 20px;
-      margin: 10px 0;
-    }
-
-    .show {
-      display: block;
-      animation: fade 1s;
-    }
-
-    @keyframes fade {
-      from {opacity: 0;}
-      to {opacity: 1;}
+    #lyric {
+      font-size: 22px;
+      margin-top: 20px;
+      min-height: 50px;
     }
 
     audio {
@@ -46,37 +36,37 @@
 
   <h1>LIRIK LAGU</h1>
 
-  <div class="lyrics">
-    <p>Sayang dengarlah bisikkan hatiku</p>
-    <p>Karena ku sayang kamu, hoooo</p>
-    <p>Sayang apa kabar denganmu</p>
-    <p>Disini ku merindukanmu</p>
-    <p>Ku harap kau baik di sana</p>
-  </div>
+  <div id="lyric">...</div>
 
-  <audio controls autoplay loop>
+  <audio id="audio" controls autoplay>
     <source src="lagu.mp3" type="audio/mpeg">
   </audio>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      let lines = document.querySelectorAll(".lyrics p");
-      let i = 0;
+    const lyrics = [
+      { time: 0, text: "Sayang dengarlah bisikkan hatiku" },
+      { time:  0.07, text: "Karena ku sayang kamu, hoooo" },
+      { time: 0.11, text: "Sayang apa kabar denganmu" },
+      { time: 0.15, text: "Disini ku merindukanmu" },
+      { time: 0.19, text: "Ku harap kau baik di sana" }
+    ];
 
-      function showLine() {
-        if (i < lines.length) {
-          lines[i].classList.add("show");
-          i++;
-          setTimeout(showLine, 3000);
+    const audio = document.getElementById("audio");
+    const lyricDiv = document.getElementById("lyric");
+
+    audio.ontimeupdate = () => {
+      let currentTime = audio.currentTime;
+
+      for (let i = 0; i < lyrics.length; i++) {
+        if (
+          currentTime >= lyrics[i].time &&
+          (i === lyrics.length - 1 || currentTime < lyrics[i + 1].time)
+        ) {
+          lyricDiv.innerText = lyrics[i].text;
         }
       }
-
-      showLine();
-    });
+    };
   </script>
-
-</body>
-</html>  </script>
 
 </body>
 </html>
