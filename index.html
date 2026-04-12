@@ -62,10 +62,23 @@
     .player button:hover {
       transform: scale(1.1);
     }
+
+    /* teks pojok */
+    #pojok {
+      position: fixed;
+      top: 10px;
+      left: 15px;
+      font-size: 14px;
+      opacity: 0.8;
+      font-style: italic;
+      text-shadow: 0 0 5px white;
+    }
   </style>
 </head>
 
 <body>
+
+<div id="pojok">lirik lagu cuman 20 detik 🤭</div>
 
 <h1>LIRIK LAGU</h1>
 
@@ -92,6 +105,8 @@ const audio = document.getElementById("audio");
 const display = document.getElementById("lyrics");
 const btn = document.getElementById("btn");
 
+let index = 0;
+
 function togglePlay() {
   if (audio.paused) {
     audio.play();
@@ -105,22 +120,18 @@ function togglePlay() {
 audio.addEventListener("timeupdate", () => {
   let current = audio.currentTime;
 
-  for (let i = 0; i < lyrics.length; i++) {
-    if (current >= lyrics[i].time &&
-       (i === lyrics.length - 1 || current < lyrics[i+1].time)) {
+  if (index < lyrics.length && current >= lyrics[index].time) {
 
-      if (display.innerText !== lyrics[i].text) {
+    display.style.opacity = 0;
+    display.style.transform = "scale(0.9)";
 
-        display.style.opacity = 0;
-        display.style.transform = "scale(0.9)";
+    setTimeout(() => {
+      display.innerText = lyrics[index].text;
+      display.style.opacity = 1;
+      display.style.transform = "scale(1)";
+    }, 100);
 
-        setTimeout(() => {
-          display.innerText = lyrics[i].text;
-          display.style.opacity = 1;
-          display.style.transform = "scale(1)";
-        }, 300);
-      }
-    }
+    index++;
   }
 });
 </script>
