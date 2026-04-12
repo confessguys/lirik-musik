@@ -16,7 +16,7 @@
                   url('bg.jpg');
       background-size: cover;
       background-position: center;
-      animation: gerakBG 30s linear infinite;
+      animation: gerakBG 20s ease-in-out infinite;
 
       color: white;
       font-family: 'Times New Roman', serif;
@@ -24,9 +24,9 @@
     }
 
     @keyframes gerakBG {
-      0% { background-position: center 0%; }
-      50% { background-position: center 100%; }
-      100% { background-position: center 0%; }
+      0% { background-position: center top; }
+      50% { background-position: center bottom; }
+      100% { background-position: center top; }
     }
 
     h1 {
@@ -40,7 +40,8 @@
       min-height: 60px;
       opacity: 1;
       transform: scale(1);
-      transition: all 0.5s ease;
+      transition: all 0.8s ease;
+      will-change: transform, opacity;
     }
 
     .player {
@@ -66,7 +67,7 @@
       font-style: italic;
     }
 
-    /* STICKER */
+    /* sticker */
     #sticker {
       position: fixed;
       bottom: 20px;
@@ -99,7 +100,6 @@
   <button id="btn">▶</button>
 </div>
 
-<!-- STICKER -->
 <img src="sticker.png" id="sticker">
 
 <script>
@@ -134,20 +134,21 @@ audio.addEventListener("timeupdate", () => {
       (i === lyrics.length - 1 || current < lyrics[i + 1].time)
     ) {
       if (display.innerText !== lyrics[i].text) {
+
         display.style.opacity = 0;
-        display.style.transform = "scale(0.9)";
+        display.style.transform = "scale(0.8)";
 
         setTimeout(() => {
           display.innerText = lyrics[i].text;
           display.style.opacity = 1;
           display.style.transform = "scale(1)";
-        }, 100);
+        }, 200);
+
       }
     }
   }
 });
 
-/* ilang di akhir */
 audio.addEventListener("ended", () => {
   display.style.opacity = 0;
 });
