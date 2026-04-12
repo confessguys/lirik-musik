@@ -95,8 +95,6 @@ const audio = document.getElementById("audio");
 const display = document.getElementById("lyrics");
 const btn = document.getElementById("btn");
 
-let index = 0;
-
 function togglePlay() {
   if (audio.paused) {
     audio.play();
@@ -110,18 +108,19 @@ function togglePlay() {
 audio.addEventListener("timeupdate", () => {
   let current = audio.currentTime;
 
-  if (index < lyrics.length && current >= lyrics[index].time) {
-    display.style.opacity = 0;
+  for (let i = 0; i < lyrics.length; i++) {
+    if (
+      current >= lyrics[i].time &&
+      (i === lyrics.length - 1 || current < lyrics[i + 1].time)
+    ) {
+      if (display.innerText !== lyrics[i].text) {
+        display.style.opacity = 0;
 
-    setTimeout(() => {
-      display.innerText = lyrics[index].text;
-      display.style.opacity = 1;
-    }, 150);
-
-    index++;
+        setTimeout(() => {
+          display.innerText = lyrics[i].text;
+          display.style.opacity = 1;
+        }, 100);
+      }
+    }
   }
 });
-</script>
-
-</body>
-</html>
