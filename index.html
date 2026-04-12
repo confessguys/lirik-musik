@@ -79,7 +79,7 @@
 </audio>
 
 <div class="player">
-  <button onclick="togglePlay()" id="btn">▶</button>
+  <button id="btn">▶</button>
 </div>
 
 <script>
@@ -95,7 +95,8 @@ const audio = document.getElementById("audio");
 const display = document.getElementById("lyrics");
 const btn = document.getElementById("btn");
 
-function togglePlay() {
+/* tombol play FIX */
+btn.addEventListener("click", () => {
   if (audio.paused) {
     audio.play();
     btn.innerText = "⏸";
@@ -103,8 +104,9 @@ function togglePlay() {
     audio.pause();
     btn.innerText = "▶";
   }
-}
+});
 
+/* sync lirik FIX (anti acak) */
 audio.addEventListener("timeupdate", () => {
   let current = audio.currentTime;
 
@@ -124,3 +126,7 @@ audio.addEventListener("timeupdate", () => {
     }
   }
 });
+</script>
+
+</body>
+</html>
