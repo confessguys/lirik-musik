@@ -4,20 +4,31 @@
   <title>Lirik Lagu</title>
   <style>
     body {
-      background: linear-gradient(to bottom, #ff4d4d, #990000);
+      margin: 0;
       font-family: 'Times New Roman', serif;
       text-align: center;
       color: white;
-      padding: 30px;
-      min-height: 100vh;
+
+      /* BACKGROUND GAMBAR */
+      background: url("bg.jpg") no-repeat center center fixed;
+      background-size: cover;
+
       display: flex;
       flex-direction: column;
       justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* layer gelap biar teks kebaca */
+    .overlay {
+      background: rgba(0,0,0,0.5);
+      padding: 30px;
+      min-height: 100vh;
     }
 
     h1 {
       font-size: 32px;
-      text-shadow: 0 0 10px white;
+      text-shadow: 0 0 15px white;
     }
 
     #lyric {
@@ -40,6 +51,8 @@
 
 <body>
 
+<div class="overlay">
+
   <h1>LIRIK LAGU</h1>
 
   <div id="lyric"></div>
@@ -48,41 +61,43 @@
     <source src="lagu.mp3" type="audio/mpeg">
   </audio>
 
-  <script>
-    const lyrics = [
-      { time: 0, text: "Sayang dengarlah bisikkan hatiku" },
-      { time: 5, text: "Karena ku sayang kamu, hoooo" },
-      { time: 10, text: "Sayang apa kabar denganmu" },
-      { time: 14, text: "Disini ku merindukanmu" },
-      { time: 18, text: "Ku harap kau baik di sana" }
-    ];
+</div>
 
-    const audio = document.getElementById("audio");
-    const lyricDiv = document.getElementById("lyric");
-    let currentIndex = -1;
+<script>
+  const lyrics = [
+    { time: 0, text: "Sayang dengarlah bisikkan hatiku" },
+    { time: 5, text: "Karena ku sayang kamu, hoooo" },
+    { time: 10, text: "Sayang apa kabar denganmu" },
+    { time: 14, text: "Disini ku merindukanmu" },
+    { time: 18, text: "Ku harap kau baik di sana" }
+  ];
 
-    audio.ontimeupdate = () => {
-      let currentTime = audio.currentTime;
+  const audio = document.getElementById("audio");
+  const lyricDiv = document.getElementById("lyric");
+  let currentIndex = -1;
 
-      for (let i = 0; i < lyrics.length; i++) {
-        if (
-          currentTime >= lyrics[i].time &&
-          (i === lyrics.length - 1 || currentTime < lyrics[i + 1].time)
-        ) {
-          if (currentIndex !== i) {
-            currentIndex = i;
+  audio.ontimeupdate = () => {
+    let currentTime = audio.currentTime;
 
-            lyricDiv.classList.remove("show"); // fade out
+    for (let i = 0; i < lyrics.length; i++) {
+      if (
+        currentTime >= lyrics[i].time &&
+        (i === lyrics.length - 1 || currentTime < lyrics[i + 1].time)
+      ) {
+        if (currentIndex !== i) {
+          currentIndex = i;
 
-            setTimeout(() => {
-              lyricDiv.innerText = lyrics[i].text;
-              lyricDiv.classList.add("show"); // fade in
-            }, 300);
-          }
+          lyricDiv.classList.remove("show");
+
+          setTimeout(() => {
+            lyricDiv.innerText = lyrics[i].text;
+            lyricDiv.classList.add("show");
+          }, 300);
         }
       }
-    };
-  </script>
+    }
+  };
+</script>
 
 </body>
 </html>
