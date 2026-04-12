@@ -9,16 +9,31 @@
       text-align: center;
       color: white;
       padding: 30px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     h1 {
       font-size: 32px;
+      text-shadow: 0 0 10px white;
     }
 
-    .lyrics {
-      margin-top: 20px;
-      line-height: 1.8;
-      font-size: 18px;
+    .lyrics p {
+      display: none;
+      font-size: 20px;
+      margin: 10px 0;
+    }
+
+    .show {
+      display: block;
+      animation: fade 1s;
+    }
+
+    @keyframes fade {
+      from {opacity: 0;}
+      to {opacity: 1;}
     }
 
     audio {
@@ -32,20 +47,31 @@
   <h1>LIRIK LAGU</h1>
 
   <div class="lyrics">
-    <p>
-      Sayang dengarlah bisikkan hatiku<br>
-      Karena ku sayang kamu, hoooo<br><br>
-
-      Sayang apa kabar denganmu<br>
-      Disini ku merindukanmu<br><br>
-
-      Ku harap kau baik di sana
-    </p>
+    <p>Sayang dengarlah bisikkan hatiku</p>
+    <p>Karena ku sayang kamu, hoooo</p>
+    <p>Sayang apa kabar denganmu</p>
+    <p>Disini ku merindukanmu</p>
+    <p>Ku harap kau baik di sana</p>
   </div>
 
   <audio controls autoplay loop>
     <source src="lagu.mp3" type="audio/mpeg">
   </audio>
+
+  <script>
+    let lines = document.querySelectorAll(".lyrics p");
+    let i = 0;
+
+    function showLine() {
+      if (i < lines.length) {
+        lines[i].classList.add("show");
+        i++;
+        setTimeout(showLine, 3000); // waktu tiap lirik (3 detik)
+      }
+    }
+
+    showLine();
+  </script>
 
 </body>
 </html>
