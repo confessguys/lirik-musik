@@ -10,7 +10,7 @@
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:sans-serif;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 body{
@@ -24,7 +24,8 @@ body{
   position:absolute;
   width:100%;
   height:100%;
-  background:rgba(0,0,0,0.6);
+  background:rgba(0,0,0,0.35);
+  backdrop-filter: blur(2px);
 }
 
 /* HEADER */
@@ -44,6 +45,7 @@ body{
   width:100%;
   padding:0 15px;
   z-index:2;
+  transition:.4s;
 }
 
 .item{
@@ -54,6 +56,11 @@ body{
   padding:10px;
   border-radius:15px;
   backdrop-filter:blur(10px);
+  transition:.3s;
+}
+
+.item:active{
+  transform:scale(0.97);
 }
 
 .item img{
@@ -87,7 +94,7 @@ body{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  transition:.4s;
+  transition:.5s;
   z-index:3;
 }
 
@@ -97,9 +104,16 @@ body{
 
 /* COVER */
 .cover{
-  width:120px;
+  width:130px;
   border-radius:20px;
   margin-bottom:15px;
+  box-shadow:0 0 25px rgba(255,255,255,0.3);
+  animation:zoom 3s infinite alternate;
+}
+
+@keyframes zoom{
+  from{transform:scale(1);}
+  to{transform:scale(1.05);}
 }
 
 /* TEXT */
@@ -116,9 +130,10 @@ body{
 
 /* LIRIK */
 .lyric-box{
-  height:150px;
+  height:160px;
   overflow:hidden;
   text-align:center;
+  mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);
 }
 
 .lyric{
@@ -127,17 +142,26 @@ body{
 
 .lyric p{
   color:#aaa;
-  margin:5px 0;
+  margin:6px 0;
+  font-size:15px;
 }
 
-.active{
+.lyric .active{
   color:white;
   font-size:18px;
+  font-weight:bold;
+  text-shadow:0 0 10px rgba(255,255,255,0.4);
 }
 
 /* CONTROL */
 .controls{
   margin:15px 0;
+}
+
+.controls button{
+  padding:10px;
+  border-radius:50%;
+  border:none;
 }
 
 .progress{
@@ -147,6 +171,17 @@ body{
 .time{
   color:white;
   font-size:12px;
+}
+
+/* BACK BTN */
+.back{
+  position:absolute;
+  top:20px;
+  left:20px;
+  background:none;
+  border:none;
+  color:white;
+  font-size:18px;
 }
 </style>
 </head>
@@ -186,7 +221,7 @@ body{
 <!-- PLAYER -->
 <div class="player" id="player">
 
-<button onclick="back()" style="position:absolute;top:20px;left:20px;">⬅</button>
+<button class="back" onclick="back()">⬅</button>
 
 <img id="cover" class="cover">
 <div id="title" class="title"></div>
@@ -209,16 +244,16 @@ body{
 <audio id="audio"></audio>
 
 <script>
-let audio = document.getElementById("audio");
-let lyricDiv = document.getElementById("lyric");
-let progress = document.getElementById("progress");
-let time = document.getElementById("time");
+let audio=document.getElementById("audio");
+let lyricDiv=document.getElementById("lyric");
+let progress=document.getElementById("progress");
+let time=document.getElementById("time");
 
 let dataLrc=[];
 
 function playMusic(src,lrc,cover,title,artist){
   document.getElementById("player").classList.add("active");
-  document.getElementById("list").style.display="none";
+  document.getElementById("list").style.opacity="0";
 
   audio.src=src;
   document.getElementById("cover").src=cover;
@@ -238,10 +273,11 @@ function playMusic(src,lrc,cover,title,artist){
 function parse(data){
   let arr=[];
   data.split("\n").forEach(line=>{
-    let m=line.match(/\[(\d+):(\d+)\]/);
-    if(m){
-      let t=parseInt(m[1])*60+parseInt(m[2]);
-      arr.push({time:t,text:line.split("]")[1]});
+    let match=line.match(/\[(\d+):(\d+)(?:\.(\d+))?\](.*)/);
+    if(match){
+      let time=parseInt(match[1])*60+parseInt(match[2]);
+      let text=match[4].trim();
+      if(text) arr.push({time,text});
     }
   });
   return arr;
@@ -271,7 +307,7 @@ audio.ontimeupdate=()=>{
 
   if(all[i]){
     all[i].classList.add("active");
-    lyricDiv.style.transform=`translateY(-${i*25}px)`;
+    lyricDiv.style.transform=`translateY(-${i*28}px)`;
   }
 }
 
@@ -293,7 +329,7 @@ function toggle(){
 
 function back(){
   document.getElementById("player").classList.remove("active");
-  document.getElementById("list").style.display="block";
+  document.getElementById("list").style.opacity="1";
   audio.pause();
 }
 </script>
