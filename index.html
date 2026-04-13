@@ -97,6 +97,13 @@
       background: white;
       transition: width 0.2s;
     }
+
+    /* TIMER */
+    #time {
+      margin-top: 8px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
   </style>
 </head>
 
@@ -116,10 +123,13 @@
   <button id="btn">▶</button>
 </div>
 
-<!-- PROGRESS BAR -->
+<!-- PROGRESS -->
 <div id="progress-container">
   <div id="progress"></div>
 </div>
+
+<!-- TIMER -->
+<div id="time">0:00 / 0:00</div>
 
 <img src="sticker.png" id="sticker">
 
@@ -138,12 +148,7 @@ const lyrics = [
   { text: "Sayang dengarlah permintaanku", time: 35 },
   { text: "Jangan ragukan cintaku", time: 39 },
   { text: "Sayang percayalah apa kataku", time: 43 },
-  { text: "Karna ku sayang kamu", time: 47 },
-
-  { text: "Sayang dengarlah permintaanku", time: 52 },
-  { text: "Jaga hatimu untukku", time: 56 },
-  { text: "Sayang dengarlah bisikan hatiku", time: 60 },
-  { text: "Karna ku sayang kamu", time: 64 }
+  { text: "Karna ku sayang kamu", time: 47 }
 ];
 
 const audio = document.getElementById("audio");
@@ -151,8 +156,17 @@ const display = document.getElementById("lyrics");
 const btn = document.getElementById("btn");
 const progress = document.getElementById("progress");
 const container = document.getElementById("progress-container");
+const timeDisplay = document.getElementById("time");
 
-/* PLAY BUTTON */
+/* FORMAT TIME */
+function formatTime(sec) {
+  let m = Math.floor(sec / 60);
+  let s = Math.floor(sec % 60);
+  if (s < 10) s = "0" + s;
+  return m + ":" + s;
+}
+
+/* PLAY */
 btn.addEventListener("click", () => {
   if (audio.paused) {
     audio.play();
@@ -163,13 +177,19 @@ btn.addEventListener("click", () => {
   }
 });
 
-/* SYNC LIRIK */
+/* UPDATE */
 audio.addEventListener("timeupdate", () => {
   let current = audio.currentTime;
 
-  // progress bar
+  // progress
   let percent = (current / audio.duration) * 100;
   progress.style.width = percent + "%";
+
+  // time
+  if (audio.duration) {
+    timeDisplay.innerText =
+      formatTime(current) + " / " + formatTime(audio.duration);
+  }
 
   // lirik
   for (let i = 0; i < lyrics.length; i++) {
@@ -191,13 +211,11 @@ audio.addEventListener("timeupdate", () => {
   }
 });
 
-/* CLICK PROGRESS */
+/* CLICK BAR */
 container.addEventListener("click", (e) => {
   let width = container.clientWidth;
   let clickX = e.offsetX;
-  let duration = audio.duration;
-
-  audio.currentTime = (clickX / width) * duration;
+  audio.currentTime = (clickX / width) * audio.duration;
 });
 
 /* END */
