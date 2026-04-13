@@ -30,31 +30,26 @@
     }
 
     h1 {
-      font-size: 36px;
-      margin-bottom: 10px;
+      font-size: 34px;
       text-shadow: 0 0 10px white;
     }
 
     #lyrics {
       font-size: 22px;
       min-height: 60px;
-      transition: all 0.8s ease;
-      transform: scale(1);
+      transition: all 0.6s ease;
       opacity: 1;
-    }
-
-    .player {
-      margin-top: 20px;
+      transform: scale(1);
     }
 
     .player button {
+      margin-top: 20px;
       font-size: 20px;
       padding: 12px 20px;
-      border: none;
       border-radius: 30px;
+      border: none;
       background: white;
       color: red;
-      cursor: pointer;
     }
 
     #pojok {
@@ -63,7 +58,6 @@
       left: 15px;
       font-size: 14px;
       opacity: 0.8;
-      font-style: italic;
     }
 
     #sticker {
@@ -79,31 +73,6 @@
       50% { transform: rotate(6deg); }
       100% { transform: rotate(0deg); }
     }
-
-    /* PROGRESS BAR */
-    #progress-container {
-      width: 80%;
-      height: 8px;
-      background: rgba(255,255,255,0.3);
-      border-radius: 10px;
-      margin-top: 15px;
-      overflow: hidden;
-      cursor: pointer;
-    }
-
-    #progress {
-      height: 100%;
-      width: 0%;
-      background: white;
-      transition: width 0.2s;
-    }
-
-    /* TIMER */
-    #time {
-      margin-top: 8px;
-      font-size: 14px;
-      opacity: 0.8;
-    }
   </style>
 </head>
 
@@ -112,7 +81,6 @@
 <div id="pojok">lirik lagu cuman 20 detik 🤭</div>
 
 <h1>LIRIK LAGU</h1>
-
 <div id="lyrics">▶ pencet play dulu</div>
 
 <audio id="audio">
@@ -123,50 +91,37 @@
   <button id="btn">▶</button>
 </div>
 
-<!-- PROGRESS -->
-<div id="progress-container">
-  <div id="progress"></div>
-</div>
-
-<!-- TIMER -->
-<div id="time">0:00 / 0:00</div>
-
 <img src="sticker.png" id="sticker">
 
 <script>
-const lyrics = [
-  { text: "Sayang apa kabar denganmu", time: 1 },
-  { text: "Disini ku merindukan kamu", time: 5 },
-  { text: "Ku harap cintamu takkan berubah", time: 9 },
-  { text: "Karna disini ku tetap untukmu", time: 13 },
-
-  { text: "Sayang apa kabar denganmu", time: 18 },
-  { text: "Cobalah kamu telepon diriku", time: 22 },
-  { text: "Ku rindu dengar suara indahmu", time: 26 },
-  { text: "Karna dirimulah semangat hidupku", time: 30 },
-
-  { text: "Sayang dengarlah permintaanku", time: 35 },
-  { text: "Jangan ragukan cintaku", time: 39 },
-  { text: "Sayang percayalah apa kataku", time: 43 },
-  { text: "Karna ku sayang kamu", time: 47 }
-];
-
 const audio = document.getElementById("audio");
 const display = document.getElementById("lyrics");
 const btn = document.getElementById("btn");
-const progress = document.getElementById("progress");
-const container = document.getElementById("progress-container");
-const timeDisplay = document.getElementById("time");
 
-/* FORMAT TIME */
-function formatTime(sec) {
-  let m = Math.floor(sec / 60);
-  let s = Math.floor(sec % 60);
-  if (s < 10) s = "0" + s;
-  return m + ":" + s;
-}
+let lyrics = [];
 
-/* PLAY */
+/* LOAD LRC (ANTI CACHE) */
+fetch("lagu.lrc?v=" + new Date().getTime())
+  .then(res => res.text())
+  .then(data => {
+    const lines = data.split("\n");
+
+    lines.forEach(line => {
+      let match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+      if (match) {
+        let min = parseInt(match[1]);
+        let sec = parseFloat(match[2]);
+        let text = match[3].trim();
+
+        lyrics.push({
+          time: min * 60 + sec,
+          text: text
+        });
+      }
+    });
+  });
+
+/* PLAY BUTTON */
 btn.addEventListener("click", () => {
   if (audio.paused) {
     audio.play();
@@ -177,27 +132,17 @@ btn.addEventListener("click", () => {
   }
 });
 
-/* UPDATE */
+/* SYNC LIRIK FIX */
 audio.addEventListener("timeupdate", () => {
   let current = audio.currentTime;
 
-  // progress
-  let percent = (current / audio.duration) * 100;
-  progress.style.width = percent + "%";
-
-  // time
-  if (audio.duration) {
-    timeDisplay.innerText =
-      formatTime(current) + " / " + formatTime(audio.duration);
-  }
-
-  // lirik
   for (let i = 0; i < lyrics.length; i++) {
     if (
       current >= lyrics[i].time &&
       (i === lyrics.length - 1 || current < lyrics[i + 1].time)
     ) {
       if (display.innerText !== lyrics[i].text) {
+
         display.style.opacity = 0;
         display.style.transform = "scale(0.8)";
 
@@ -211,14 +156,7 @@ audio.addEventListener("timeupdate", () => {
   }
 });
 
-/* CLICK BAR */
-container.addEventListener("click", (e) => {
-  let width = container.clientWidth;
-  let clickX = e.offsetX;
-  audio.currentTime = (clickX / width) * audio.duration;
-});
-
-/* END */
+/* HILANG DI AKHIR */
 audio.addEventListener("ended", () => {
   display.style.opacity = 0;
 });
