@@ -30,22 +30,21 @@
     }
 
     h1 {
-      font-size: 38px;
-      margin-bottom: 20px;
-      text-shadow: 0 0 15px white;
+      font-size: 36px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px white;
     }
 
     #lyrics {
       font-size: 22px;
       min-height: 60px;
-      opacity: 1;
-      transform: scale(1);
       transition: all 0.8s ease;
-      will-change: transform, opacity;
+      transform: scale(1);
+      opacity: 1;
     }
 
     .player {
-      margin-top: 25px;
+      margin-top: 20px;
     }
 
     .player button {
@@ -67,7 +66,6 @@
       font-style: italic;
     }
 
-    /* sticker */
     #sticker {
       position: fixed;
       bottom: 20px;
@@ -105,10 +103,32 @@
 <script>
 const lyrics = [
   { text: "Sayang dengarlah bisikkan hatiku", time: 0 },
-  { text: "Karena ku sayang kamu, hoooo", time: 4 },
-  { text: "Sayang apa kabar denganmu", time: 10 },
-  { text: "Disini ku merindukanmu", time: 14 },
-  { text: "Ku harap kau baik di sana", time: 18 }
+  { text: "Karena ku sayang kamu hoooo", time: 4 },
+  { text: "Sayang apa kabar denganmu", time: 9 },
+  { text: "Disini ku merindukanmu", time: 13 },
+  { text: "Ku harap kau baik di sana", time: 17 },
+
+  { text: "Aku disini menunggumu", time: 22 },
+  { text: "Menanti hari kita berjumpa", time: 26 },
+  { text: "Tak terasa waktu berlalu", time: 31 },
+  { text: "Hati ini semakin rindu", time: 35 },
+
+  { text: "Sayang dengarlah bisikkan hatiku", time: 40 },
+  { text: "Karena ku sayang kamu hoooo", time: 44 },
+  { text: "Sayang apa kabar denganmu", time: 49 },
+  { text: "Disini ku merindukanmu", time: 53 },
+  { text: "Ku harap kau baik di sana", time: 57 },
+
+  { text: "Walau jarak memisahkan kita", time: 62 },
+  { text: "Cinta ini kan tetap ada", time: 66 },
+  { text: "Percayalah padaku sayang", time: 70 },
+  { text: "Aku akan selalu setia", time: 74 },
+
+  { text: "Sayang dengarlah bisikkan hatiku", time: 79 },
+  { text: "Karena ku sayang kamu hoooo", time: 83 },
+  { text: "Sayang apa kabar denganmu", time: 88 },
+  { text: "Disini ku merindukanmu", time: 92 },
+  { text: "Ku harap kau baik di sana", time: 96 }
 ];
 
 const audio = document.getElementById("audio");
