@@ -79,6 +79,24 @@
       50% { transform: rotate(6deg); }
       100% { transform: rotate(0deg); }
     }
+
+    /* PROGRESS BAR */
+    #progress-container {
+      width: 80%;
+      height: 8px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 10px;
+      margin-top: 15px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    #progress {
+      height: 100%;
+      width: 0%;
+      background: white;
+      transition: width 0.2s;
+    }
   </style>
 </head>
 
@@ -98,43 +116,43 @@
   <button id="btn">▶</button>
 </div>
 
+<!-- PROGRESS BAR -->
+<div id="progress-container">
+  <div id="progress"></div>
+</div>
+
 <img src="sticker.png" id="sticker">
 
 <script>
 const lyrics = [
-  { text: "Sayang dengarlah bisikkan hatiku", time: 0 },
-  { text: "Karena ku sayang kamu hoooo", time: 4 },
-  { text: "Sayang apa kabar denganmu", time: 9 },
-  { text: "Disini ku merindukanmu", time: 13 },
-  { text: "Ku harap kau baik di sana", time: 17 },
+  { text: "Sayang apa kabar denganmu", time: 1 },
+  { text: "Disini ku merindukan kamu", time: 5 },
+  { text: "Ku harap cintamu takkan berubah", time: 9 },
+  { text: "Karna disini ku tetap untukmu", time: 13 },
 
-  { text: "Aku disini menunggumu", time: 22 },
-  { text: "Menanti hari kita berjumpa", time: 26 },
-  { text: "Tak terasa waktu berlalu", time: 31 },
-  { text: "Hati ini semakin rindu", time: 35 },
+  { text: "Sayang apa kabar denganmu", time: 18 },
+  { text: "Cobalah kamu telepon diriku", time: 22 },
+  { text: "Ku rindu dengar suara indahmu", time: 26 },
+  { text: "Karna dirimulah semangat hidupku", time: 30 },
 
-  { text: "Sayang dengarlah bisikkan hatiku", time: 40 },
-  { text: "Karena ku sayang kamu hoooo", time: 44 },
-  { text: "Sayang apa kabar denganmu", time: 49 },
-  { text: "Disini ku merindukanmu", time: 53 },
-  { text: "Ku harap kau baik di sana", time: 57 },
+  { text: "Sayang dengarlah permintaanku", time: 35 },
+  { text: "Jangan ragukan cintaku", time: 39 },
+  { text: "Sayang percayalah apa kataku", time: 43 },
+  { text: "Karna ku sayang kamu", time: 47 },
 
-  { text: "Walau jarak memisahkan kita", time: 62 },
-  { text: "Cinta ini kan tetap ada", time: 66 },
-  { text: "Percayalah padaku sayang", time: 70 },
-  { text: "Aku akan selalu setia", time: 74 },
-
-  { text: "Sayang dengarlah bisikkan hatiku", time: 79 },
-  { text: "Karena ku sayang kamu hoooo", time: 83 },
-  { text: "Sayang apa kabar denganmu", time: 88 },
-  { text: "Disini ku merindukanmu", time: 92 },
-  { text: "Ku harap kau baik di sana", time: 96 }
+  { text: "Sayang dengarlah permintaanku", time: 52 },
+  { text: "Jaga hatimu untukku", time: 56 },
+  { text: "Sayang dengarlah bisikan hatiku", time: 60 },
+  { text: "Karna ku sayang kamu", time: 64 }
 ];
 
 const audio = document.getElementById("audio");
 const display = document.getElementById("lyrics");
 const btn = document.getElementById("btn");
+const progress = document.getElementById("progress");
+const container = document.getElementById("progress-container");
 
+/* PLAY BUTTON */
 btn.addEventListener("click", () => {
   if (audio.paused) {
     audio.play();
@@ -145,16 +163,21 @@ btn.addEventListener("click", () => {
   }
 });
 
+/* SYNC LIRIK */
 audio.addEventListener("timeupdate", () => {
   let current = audio.currentTime;
 
+  // progress bar
+  let percent = (current / audio.duration) * 100;
+  progress.style.width = percent + "%";
+
+  // lirik
   for (let i = 0; i < lyrics.length; i++) {
     if (
       current >= lyrics[i].time &&
       (i === lyrics.length - 1 || current < lyrics[i + 1].time)
     ) {
       if (display.innerText !== lyrics[i].text) {
-
         display.style.opacity = 0;
         display.style.transform = "scale(0.8)";
 
@@ -163,12 +186,21 @@ audio.addEventListener("timeupdate", () => {
           display.style.opacity = 1;
           display.style.transform = "scale(1)";
         }, 200);
-
       }
     }
   }
 });
 
+/* CLICK PROGRESS */
+container.addEventListener("click", (e) => {
+  let width = container.clientWidth;
+  let clickX = e.offsetX;
+  let duration = audio.duration;
+
+  audio.currentTime = (clickX / width) * duration;
+});
+
+/* END */
 audio.addEventListener("ended", () => {
   display.style.opacity = 0;
 });
