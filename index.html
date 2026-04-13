@@ -22,13 +22,15 @@ body{
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
-  transition:0.5s;
+  justify-content:flex-start;
 }
 
 /* HOME */
 #home{
-  background:url('bg.jpg') center/cover;
+  background:
+  linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.85)),
+  url('hadxz.jpg') center/cover;
+  padding-top:120px;
 }
 
 .header{
@@ -36,18 +38,22 @@ body{
   top:0;
   width:100%;
   padding:15px;
-  background:rgba(0,0,0,0.4);
-  text-align:left;
+  background:rgba(0,0,0,0.5);
+  backdrop-filter: blur(5px);
+}
+
+.header h3{
+  margin:0;
 }
 
 .song{
   width:90%;
-  background:black;
+  background:rgba(0,0,0,0.8);
   margin:10px;
-  padding:10px;
+  padding:12px;
   display:flex;
   align-items:center;
-  border-radius:10px;
+  border-radius:12px;
   cursor:pointer;
   transition:0.3s;
 }
@@ -73,12 +79,14 @@ body{
   background-size:cover;
   background-position:center;
   display:none;
+  justify-content:center;
 }
 
 #cover{
   width:150px;
   border-radius:15px;
   margin-bottom:10px;
+  box-shadow:0 0 20px rgba(255,255,255,0.4);
 }
 
 #judul{
@@ -95,8 +103,9 @@ button{
   padding:10px;
   border:none;
   border-radius:50%;
+  font-size:18px;
+  cursor:pointer;
 }
-
 </style>
 </head>
 
