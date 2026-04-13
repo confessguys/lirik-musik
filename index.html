@@ -11,22 +11,12 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-
-      background: linear-gradient(rgba(0,100,255,0.6), rgba(0,0,50,0.9)),
-                  url('bg2.jpg');
       background-size: cover;
       background-position: center;
-      animation: gerakBG 15s ease-in-out infinite;
-
       color: white;
       font-family: 'Times New Roman', serif;
       text-align: center;
-    }
-
-    @keyframes gerakBG {
-      0% { background-position: center top; }
-      50% { background-position: center bottom; }
-      100% { background-position: center top; }
+      transition: 0.5s;
     }
 
     #dev {
@@ -36,7 +26,6 @@
       transform: translateX(-50%);
       font-size: 13px;
       opacity: 0;
-      text-shadow: 0 0 8px white;
       animation: devIntro 5s ease forwards;
     }
 
@@ -48,83 +37,57 @@
     }
 
     #cover {
-      width: 150px;
-      height: 150px;
-      object-fit: cover;
+      width: 140px;
+      height: 140px;
       border-radius: 15px;
       margin-bottom: 15px;
-      box-shadow: 0 0 25px rgba(0,150,255,0.6);
-      animation: zoomCover 5s ease-in-out infinite;
-    }
-
-    @keyframes zoomCover {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-      100% { transform: scale(1); }
+      object-fit: cover;
+      box-shadow: 0 0 20px rgba(255,255,255,0.5);
     }
 
     #judul {
-      font-size: 28px;
-      text-shadow: 0 0 15px #4da6ff;
-      margin: 5px 0;
+      font-size: 26px;
+      margin: 5px;
     }
 
     #artist {
       font-size: 14px;
       opacity: 0.8;
-      margin-bottom: 10px;
     }
 
     #lyrics-container {
       height: 150px;
       width: 80%;
       overflow: hidden;
-      position: relative;
       margin-top: 10px;
-
-      mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);
     }
 
     #lyrics {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
+      transition: 0.5s;
     }
 
     .line {
+      opacity: 0.3;
       font-size: 18px;
-      opacity: 0.2;
       margin: 5px 0;
-      transition: all 0.3s ease;
     }
 
     .active {
-      font-size: 24px;
       opacity: 1;
-      transform: scale(1.15);
-      text-shadow: 0 0 15px #4da6ff;
+      font-size: 24px;
+      transform: scale(1.1);
     }
 
     button {
-      margin-top: 20px;
-      padding: 10px 25px;
-      border-radius: 30px;
+      margin: 5px;
+      padding: 8px 15px;
+      border-radius: 20px;
       border: none;
-      background: white;
-      color: blue;
       cursor: pointer;
-      box-shadow: 0 0 10px rgba(255,255,255,0.6);
     }
 
     #progress {
       width: 70%;
-      margin-top: 15px;
-    }
-
-    #time {
-      font-size: 13px;
-      margin-top: 5px;
     }
   </style>
 </head>
@@ -133,123 +96,102 @@
 
 <div id="dev">developed by r4ul & jena</div>
 
-<img id="cover" src="cover2.png">
+<img id="cover">
 
-<h1 id="judul">Sedia Aku Sebelum Hujan</h1>
-<div id="artist">Ebiet G. Ade</div>
+<h1 id="judul"></h1>
+<div id="artist"></div>
 
 <div id="lyrics-container">
   <div id="lyrics"></div>
 </div>
 
-<audio id="audio" preload="auto">
-  <source src="lagu2.mp3">
-</audio>
+<audio id="audio"></audio>
 
-<button id="btn" disabled>Loading...</button>
-
+<button onclick="togglePlay()">▶ / ⏸</button>
+<br>
 <input type="range" id="progress">
-<div id="time">0:00 / 0:00</div>
+<br>
+
+<button onclick="loadSong(0)">Lagu 1</button>
+<button onclick="loadSong(1)">Lagu 2</button>
 
 <script>
-const audio = document.getElementById("audio");
-const btn = document.getElementById("btn");
-const display = document.getElementById("lyrics");
-const progress = document.getElementById("progress");
-const time = document.getElementById("time");
-const container = document.getElementById("lyrics-container");
+const songs = [
+  {
+    title: "Sayang",
+    artist: "Shae",
+    file: "lagu.mp3",
+    lrc: "lagu.lrc",
+    cover: "cover.png",
+    bg: "bg.jpg",
+    color: "red"
+  },
+  {
+    title: "Sedia Aku Sebelum Hujan",
+    artist: "Ebiet G. Ade",
+    file: "hujan.mp3",
+    lrc: "hujan.lrc",
+    cover: "hujanpict.png",
+    bg: "blue.jpg",
+    color: "blue"
+  }
+];
 
+let audio = document.getElementById("audio");
 let lyrics = [];
-let currentIndex = 0;
+let index = 0;
 
-fetch("lagu2.lrc?v=" + new Date().getTime())
-  .then(res => res.text())
-  .then(data => {
-    const lines = data.split("\n");
+function loadSong(i){
+  let s = songs[i];
 
-    lines.forEach(line => {
-      let match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-      if (match) {
-        lyrics.push({
-          time: parseInt(match[1]) * 60 + parseFloat(match[2]),
-          text: match[3].trim()
-        });
-      }
+  audio.src = s.file;
+  document.getElementById("cover").src = s.cover;
+  document.getElementById("judul").innerText = s.title;
+  document.getElementById("artist").innerText = s.artist;
+
+  document.body.style.background = 
+    `linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.8)), url('${s.bg}')`;
+
+  fetch(s.lrc + "?v=" + new Date().getTime())
+    .then(r=>r.text())
+    .then(data=>{
+      lyrics=[];
+      data.split("\n").forEach(line=>{
+        let m=line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+        if(m){
+          lyrics.push({
+            time: parseInt(m[1])*60+parseFloat(m[2]),
+            text: m[3]
+          });
+        }
+      });
     });
-
-    renderLyrics(0);
-  });
-
-audio.addEventListener("canplaythrough", () => {
-  btn.disabled = false;
-  btn.innerText = "▶";
-});
-
-btn.addEventListener("click", () => {
-  if (audio.paused) {
-    audio.play();
-    btn.innerText = "⏸";
-  } else {
-    audio.pause();
-    btn.innerText = "▶";
-  }
-});
-
-function format(sec){
-  let m = Math.floor(sec/60);
-  let s = Math.floor(sec%60);
-  return m + ":" + (s<10?"0"+s:s);
 }
 
-function renderLyrics(activeIndex){
-  display.innerHTML = "";
-
-  let activeEl = null;
-
-  lyrics.forEach((line, index) => {
-    let div = document.createElement("div");
-    div.innerText = line.text;
-    div.classList.add("line");
-
-    if(index === activeIndex){
-      div.classList.add("active");
-      activeEl = div;
-    }
-
-    display.appendChild(div);
-  });
-
-  if(activeEl){
-    const offset = activeEl.offsetTop - container.clientHeight/2 + activeEl.clientHeight/2;
-    display.style.transform = `translateY(-${offset}px)`;
-  }
+function togglePlay(){
+  if(audio.paused) audio.play();
+  else audio.pause();
 }
 
-audio.addEventListener("timeupdate", () => {
+audio.ontimeupdate = ()=>{
   let t = audio.currentTime;
+  document.getElementById("progress").value = t;
 
-  progress.max = Math.floor(audio.duration);
-  progress.value = Math.floor(t);
-
-  time.innerText = format(t) + " / " + format(audio.duration);
-
-  for(let i=0;i<lyrics.length;i++){
-    if(t >= lyrics[i].time && (i==lyrics.length-1 || t < lyrics[i+1].time)){
-      if(currentIndex !== i){
-        currentIndex = i;
-        renderLyrics(i);
-      }
+  let html="";
+  lyrics.forEach((l,i)=>{
+    if(t>=l.time && (!lyrics[i+1]||t<lyrics[i+1].time)){
+      index=i;
     }
-  }
-});
+    html+=`<div class="${i==index?'active':'line'}">${l.text}</div>`;
+  });
+  document.getElementById("lyrics").innerHTML=html;
+};
 
-progress.addEventListener("input", ()=>{
-  audio.currentTime = progress.value;
-});
+document.getElementById("progress").oninput = (e)=>{
+  audio.currentTime = e.target.value;
+};
 
-audio.addEventListener("ended", ()=>{
-  btn.innerText = "▶";
-});
+loadSong(0);
 </script>
 
 </body>
