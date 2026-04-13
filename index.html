@@ -1,240 +1,312 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Music Web</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
-
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  font-family:'Poppins', sans-serif;
-  color:white;
+body {
+  height: 100vh;
+  overflow: hidden;
+  background: url('hadzx.jpg') no-repeat center/cover;
 }
 
-/* BACKGROUND */
-.bg{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100vw;
-  height:100vh;
-  background:url('hadxz.jpg') center/cover no-repeat;
-  filter:brightness(0.4);
-  z-index:-1;
+.overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.65);
 }
 
-/* PAGE */
-.page{
-  width:100%;
-  height:100%;
-  position:absolute;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  padding-top:120px;
-  transition:0.5s;
+.container {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-/* HEADER */
-.header{
-  position:absolute;
-  top:0;
-  width:100%;
-  padding:15px;
-  background:rgba(0,0,0,0.5);
-  backdrop-filter:blur(5px);
-  animation:fadeDown 0.8s;
+.header {
+  position: absolute;
+  top: 30px;
+  text-align: center;
+  color: white;
 }
 
-/* SONG LIST */
-.song{
-  width:90%;
-  background:rgba(0,0,0,0.7);
-  margin:10px;
-  padding:12px;
-  display:flex;
-  align-items:center;
-  border-radius:12px;
-  cursor:pointer;
-  transition:0.3s;
-  animation:fadeUp 0.8s;
+.header h1 {
+  font-size: 20px;
 }
 
-.song:hover{
-  transform:scale(1.03);
+.header p {
+  font-size: 14px;
+  opacity: 0.8;
 }
 
-.song img{
-  width:60px;
-  height:60px;
-  border-radius:10px;
-  margin-right:10px;
+/* LIST */
+.music-list {
+  width: 90%;
+  margin-top: 80px;
 }
 
-.play{
-  margin-left:auto;
-  font-size:20px;
+.item {
+  display: flex;
+  align-items: center;
+  background: rgba(0,0,0,0.6);
+  padding: 10px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.item img {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
+.info {
+  flex: 1;
+  color: white;
+}
+
+.play-btn {
+  background: orange;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  color: white;
 }
 
 /* PLAYER */
-#player{
-  display:none;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  text-align:center;
-  animation:fadeIn 0.5s;
+.player {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: 0.5s;
 }
 
-#cover{
-  width:150px;
-  border-radius:15px;
-  margin-bottom:10px;
-  box-shadow:0 0 20px rgba(255,255,255,0.4);
-  animation:zoom 0.5s;
+.player.active {
+  left: 0;
 }
 
-#judul{
-  font-size:22px;
+.cover {
+  width: 120px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.2);
 }
 
-#artist{
-  font-size:14px;
-  opacity:0.8;
+.title {
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
 }
 
-button{
-  margin:10px;
-  padding:12px;
-  border:none;
-  border-radius:50%;
-  font-size:18px;
-  cursor:pointer;
-  background:white;
+.artist {
+  color: #ccc;
+  margin-bottom: 20px;
 }
 
-/* ANIMATIONS */
-@keyframes fadeUp{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:translateY(0);}
+/* LIRIK */
+.lyrics-box {
+  height: 150px;
+  overflow: hidden;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-@keyframes fadeDown{
-  from{opacity:0; transform:translateY(-20px);}
-  to{opacity:1; transform:translateY(0);}
+.lyrics {
+  transition: 0.3s;
 }
 
-@keyframes fadeIn{
-  from{opacity:0;}
-  to{opacity:1;}
+.lyrics p {
+  color: #aaa;
+  font-size: 16px;
+  margin: 5px 0;
 }
 
-@keyframes zoom{
-  from{transform:scale(0.8);}
-  to{transform:scale(1);}
+.lyrics .active {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* CONTROL */
+.controls button {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 50%;
+  border: none;
+}
+
+.progress {
+  width: 80%;
+}
+
+.time {
+  color: white;
+  font-size: 12px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="bg"></div>
+<div class="overlay"></div>
 
-<!-- HOME -->
-<div id="home" class="page">
+<div class="container">
 
 <div class="header">
-<h3>welcome to my music</h3>
-<p>follow tiktok lu disini</p>
+<h1>welcome to my music</h1>
+<p>clone h4dxz</p>
 </div>
 
-<div class="song" onclick="openPlayer(0)">
-<img src="cover.png">
-<div>
-<b>Sayang</b><br>
-<small>Shae</small>
-</div>
-<div class="play">▶️</div>
-</div>
-
-<div class="song" onclick="openPlayer(1)">
+<div class="music-list">
+<div class="item" onclick="playMusic('hujan.mp3','hujan.lrc','hujanpict.png','Sedia Aku Sebelum Hujan','Ebiet G. Ade')">
 <img src="hujanpict.png">
-<div>
-<b>Sedia Aku Sebelum Hujan</b><br>
+<div class="info">
+<p>Sedia Aku Sebelum Hujan</p>
 <small>Ebiet G. Ade</small>
 </div>
-<div class="play">▶️</div>
+<button class="play-btn">▶</button>
+</div>
+
+<div class="item" onclick="playMusic('lagu.mp3','lagu.lrc','cover.png','Sayang','Shae')">
+<img src="cover.png">
+<div class="info">
+<p>Sayang</p>
+<small>Shae</small>
+</div>
+<button class="play-btn">▶</button>
+</div>
 </div>
 
 </div>
 
 <!-- PLAYER -->
-<div id="player" class="page">
+<div class="player" id="player">
+<img id="cover" class="cover">
+<div id="title" class="title"></div>
+<div id="artist" class="artist"></div>
 
-<img id="cover">
-<h1 id="judul"></h1>
-<div id="artist"></div>
+<div class="lyrics-box">
+<div id="lyrics" class="lyrics"></div>
+</div>
+
+<div class="controls">
+<button onclick="toggle()">⏯</button>
+</div>
+
+<input type="range" id="progress" class="progress" value="0">
+
+<div class="time" id="time">0:00 / 0:00</div>
+
+</div>
 
 <audio id="audio"></audio>
 
-<div>
-<button onclick="back()">⬅️</button>
-<button onclick="toggle()">⏯️</button>
-</div>
-
-</div>
-
 <script>
-const songs=[
-{
-title:"Sayang",
-artist:"Shae",
-file:"lagu.mp3",
-cover:"cover.png"
-},
-{
-title:"Sedia Aku Sebelum Hujan",
-artist:"Ebiet G. Ade",
-file:"hujan.mp3",
-cover:"hujanpict.png"
+let audio = document.getElementById("audio");
+let lyricsDiv = document.getElementById("lyrics");
+let progress = document.getElementById("progress");
+let time = document.getElementById("time");
+
+let lrcData = [];
+
+function playMusic(src,lrc,cover,title,artist){
+  document.getElementById("player").classList.add("active");
+  audio.src = src;
+  document.getElementById("cover").src = cover;
+  document.getElementById("title").innerText = title;
+  document.getElementById("artist").innerText = artist;
+  
+  fetch(lrc)
+  .then(res=>res.text())
+  .then(data=>{
+    lrcData = parseLRC(data);
+    renderLyrics();
+  });
+
+  audio.play();
 }
-];
 
-let audio=document.getElementById("audio");
+function parseLRC(data){
+  let lines = data.split("\n");
+  let result = [];
+  lines.forEach(line=>{
+    let match = line.match(/\[(\d+):(\d+).(\d+)\](.*)/);
+    if(match){
+      let time = parseInt(match[1])*60 + parseInt(match[2]);
+      result.push({time:textToSec(match),text:match[4]});
+    }
+  });
+  return result;
+}
 
-function openPlayer(i){
-let s=songs[i];
+function textToSec(m){
+  return parseInt(m[1])*60 + parseInt(m[2]);
+}
 
-document.getElementById("home").style.display="none";
-document.getElementById("player").style.display="flex";
+function renderLyrics(){
+  lyricsDiv.innerHTML = "";
+  lrcData.forEach(l=>{
+    let p = document.createElement("p");
+    p.innerText = l.text;
+    lyricsDiv.appendChild(p);
+  });
+}
 
-document.getElementById("cover").src=s.cover;
-document.getElementById("judul").innerText=s.title;
-document.getElementById("artist").innerText=s.artist;
+audio.ontimeupdate = ()=>{
+  let current = audio.currentTime;
+  let duration = audio.duration;
 
-audio.src=s.file;
-audio.play();
+  progress.value = (current/duration)*100 || 0;
+
+  time.innerText = format(current)+" / "+format(duration);
+
+  let index = lrcData.findIndex((l,i)=> current < l.time) -1;
+  if(index < 0) index = 0;
+
+  let all = lyricsDiv.querySelectorAll("p");
+  all.forEach(el=>el.classList.remove("active"));
+
+  if(all[index]){
+    all[index].classList.add("active");
+    lyricsDiv.style.transform = `translateY(-${index*28}px)`;
+  }
+}
+
+function format(t){
+  let m = Math.floor(t/60);
+  let s = Math.floor(t%60);
+  if(s<10) s="0"+s;
+  return m+":"+s;
+}
+
+progress.oninput = ()=>{
+  audio.currentTime = (progress.value/100)*audio.duration;
 }
 
 function toggle(){
-if(audio.paused) audio.play();
-else audio.pause();
-}
-
-function back(){
-audio.pause();
-document.getElementById("player").style.display="none";
-document.getElementById("home").style.display="flex";
+  if(audio.paused) audio.play();
+  else audio.pause();
 }
 </script>
 
