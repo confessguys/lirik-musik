@@ -6,49 +6,60 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
 
 <style>
-body{
+*{
   margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
   font-family:'Poppins', sans-serif;
   color:white;
+}
+
+/* BACKGROUND */
+.bg{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  background:url('hadxz.jpg') center/cover no-repeat;
+  filter:brightness(0.4);
+  z-index:-1;
 }
 
 /* PAGE */
 .page{
   width:100%;
-  height:100vh;
+  height:100%;
   position:absolute;
-  top:0;
-  left:0;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:flex-start;
-}
-
-/* HOME */
-#home{
-  background:
-  linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.85)),
-  url('hadxz.jpg') center/cover;
   padding-top:120px;
+  transition:0.5s;
 }
 
+/* HEADER */
 .header{
   position:absolute;
   top:0;
   width:100%;
   padding:15px;
   background:rgba(0,0,0,0.5);
-  backdrop-filter: blur(5px);
+  backdrop-filter:blur(5px);
+  animation:fadeDown 0.8s;
 }
 
-.header h3{
-  margin:0;
-}
-
+/* SONG LIST */
 .song{
   width:90%;
-  background:rgba(0,0,0,0.8);
+  background:rgba(0,0,0,0.7);
   margin:10px;
   padding:12px;
   display:flex;
@@ -56,6 +67,7 @@ body{
   border-radius:12px;
   cursor:pointer;
   transition:0.3s;
+  animation:fadeUp 0.8s;
 }
 
 .song:hover{
@@ -76,10 +88,12 @@ body{
 
 /* PLAYER */
 #player{
-  background-size:cover;
-  background-position:center;
   display:none;
   justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  text-align:center;
+  animation:fadeIn 0.5s;
 }
 
 #cover{
@@ -87,6 +101,7 @@ body{
   border-radius:15px;
   margin-bottom:10px;
   box-shadow:0 0 20px rgba(255,255,255,0.4);
+  animation:zoom 0.5s;
 }
 
 #judul{
@@ -99,17 +114,41 @@ body{
 }
 
 button{
-  margin:5px;
-  padding:10px;
+  margin:10px;
+  padding:12px;
   border:none;
   border-radius:50%;
   font-size:18px;
   cursor:pointer;
+  background:white;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+@keyframes fadeDown{
+  from{opacity:0; transform:translateY(-20px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+@keyframes zoom{
+  from{transform:scale(0.8);}
+  to{transform:scale(1);}
 }
 </style>
 </head>
 
 <body>
+
+<div class="bg"></div>
 
 <!-- HOME -->
 <div id="home" class="page">
@@ -161,15 +200,13 @@ const songs=[
 title:"Sayang",
 artist:"Shae",
 file:"lagu.mp3",
-cover:"cover.png",
-bg:"bg.jpg"
+cover:"cover.png"
 },
 {
 title:"Sedia Aku Sebelum Hujan",
 artist:"Ebiet G. Ade",
 file:"hujan.mp3",
-cover:"hujanpict.png",
-bg:"blue.jpg"
+cover:"hujanpict.png"
 }
 ];
 
@@ -184,9 +221,6 @@ document.getElementById("player").style.display="flex";
 document.getElementById("cover").src=s.cover;
 document.getElementById("judul").innerText=s.title;
 document.getElementById("artist").innerText=s.artist;
-
-document.getElementById("player").style.background=
-`linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.9)),url(${s.bg})`;
 
 audio.src=s.file;
 audio.play();
