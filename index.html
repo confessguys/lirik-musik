@@ -6,163 +6,147 @@
 <title>Music Web</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:sans-serif;
 }
 
-body {
-  height: 100vh;
-  overflow: hidden;
-  background: url('hadzx.jpg') no-repeat center/cover;
+body{
+  height:100vh;
+  overflow:hidden;
+  background:url('hadzx.jpg') center/cover no-repeat;
 }
 
-.overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.65);
+/* DARK OVERLAY */
+.overlay{
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
 }
 
-.container {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.header {
-  position: absolute;
-  top: 30px;
-  text-align: center;
-  color: white;
-}
-
-.header h1 {
-  font-size: 20px;
-}
-
-.header p {
-  font-size: 14px;
-  opacity: 0.8;
+/* HEADER */
+.header{
+  position:absolute;
+  top:30px;
+  width:100%;
+  text-align:center;
+  color:white;
+  z-index:2;
 }
 
 /* LIST */
-.music-list {
-  width: 90%;
-  margin-top: 80px;
+.music-list{
+  position:absolute;
+  top:120px;
+  width:100%;
+  padding:0 15px;
+  z-index:2;
 }
 
-.item {
-  display: flex;
-  align-items: center;
-  background: rgba(0,0,0,0.6);
-  padding: 10px;
-  border-radius: 15px;
-  margin-bottom: 10px;
-  backdrop-filter: blur(10px);
+.item{
+  display:flex;
+  align-items:center;
+  background:rgba(0,0,0,0.6);
+  margin-bottom:10px;
+  padding:10px;
+  border-radius:15px;
+  backdrop-filter:blur(10px);
 }
 
-.item img {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
-  margin-right: 10px;
+.item img{
+  width:50px;
+  height:50px;
+  border-radius:10px;
+  margin-right:10px;
 }
 
-.info {
-  flex: 1;
-  color: white;
+.info{
+  flex:1;
+  color:white;
 }
 
-.play-btn {
-  background: orange;
-  border: none;
-  padding: 10px;
-  border-radius: 10px;
-  color: white;
+.play{
+  background:orange;
+  border:none;
+  padding:10px;
+  border-radius:10px;
+  color:white;
 }
 
 /* PLAYER */
-.player {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: 0.5s;
+.player{
+  position:absolute;
+  width:100%;
+  height:100%;
+  top:0;
+  left:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  transition:.4s;
+  z-index:3;
 }
 
-.player.active {
-  left: 0;
+.player.active{
+  left:0;
 }
 
-.cover {
-  width: 120px;
-  border-radius: 20px;
-  margin-bottom: 15px;
-  box-shadow: 0 0 20px rgba(255,255,255,0.2);
+/* COVER */
+.cover{
+  width:120px;
+  border-radius:20px;
+  margin-bottom:15px;
 }
 
-.title {
-  color: white;
-  font-size: 22px;
-  font-weight: bold;
+/* TEXT */
+.title{
+  color:white;
+  font-size:20px;
+  font-weight:bold;
 }
 
-.artist {
-  color: #ccc;
-  margin-bottom: 20px;
+.artist{
+  color:#ccc;
+  margin-bottom:20px;
 }
 
 /* LIRIK */
-.lyrics-box {
-  height: 150px;
-  overflow: hidden;
-  text-align: center;
-  margin-bottom: 20px;
+.lyric-box{
+  height:150px;
+  overflow:hidden;
+  text-align:center;
 }
 
-.lyrics {
-  transition: 0.3s;
+.lyric{
+  transition:.3s;
 }
 
-.lyrics p {
-  color: #aaa;
-  font-size: 16px;
-  margin: 5px 0;
+.lyric p{
+  color:#aaa;
+  margin:5px 0;
 }
 
-.lyrics .active {
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
+.active{
+  color:white;
+  font-size:18px;
 }
 
 /* CONTROL */
-.controls button {
-  padding: 10px;
-  margin: 5px;
-  border-radius: 50%;
-  border: none;
+.controls{
+  margin:15px 0;
 }
 
-.progress {
-  width: 80%;
+.progress{
+  width:80%;
 }
 
-.time {
-  color: white;
-  font-size: 12px;
+.time{
+  color:white;
+  font-size:12px;
 }
 </style>
 </head>
@@ -171,21 +155,21 @@ body {
 
 <div class="overlay"></div>
 
-<div class="container">
-
 <div class="header">
-<h1>welcome to my music</h1>
+<h2>welcome to my music</h2>
 <p>clone h4dxz</p>
 </div>
 
-<div class="music-list">
+<!-- LIST -->
+<div class="music-list" id="list">
+
 <div class="item" onclick="playMusic('hujan.mp3','hujan.lrc','hujanpict.png','Sedia Aku Sebelum Hujan','Ebiet G. Ade')">
 <img src="hujanpict.png">
 <div class="info">
 <p>Sedia Aku Sebelum Hujan</p>
 <small>Ebiet G. Ade</small>
 </div>
-<button class="play-btn">▶</button>
+<button class="play">▶</button>
 </div>
 
 <div class="item" onclick="playMusic('lagu.mp3','lagu.lrc','cover.png','Sayang','Shae')">
@@ -194,29 +178,31 @@ body {
 <p>Sayang</p>
 <small>Shae</small>
 </div>
-<button class="play-btn">▶</button>
-</div>
+<button class="play">▶</button>
 </div>
 
 </div>
 
 <!-- PLAYER -->
 <div class="player" id="player">
+
+<button onclick="back()" style="position:absolute;top:20px;left:20px;">⬅</button>
+
 <img id="cover" class="cover">
 <div id="title" class="title"></div>
 <div id="artist" class="artist"></div>
 
-<div class="lyrics-box">
-<div id="lyrics" class="lyrics"></div>
+<div class="lyric-box">
+<div id="lyric" class="lyric"></div>
 </div>
 
 <div class="controls">
 <button onclick="toggle()">⏯</button>
 </div>
 
-<input type="range" id="progress" class="progress" value="0">
+<input type="range" id="progress" class="progress">
 
-<div class="time" id="time">0:00 / 0:00</div>
+<div id="time" class="time">0:00 / 0:00</div>
 
 </div>
 
@@ -224,89 +210,91 @@ body {
 
 <script>
 let audio = document.getElementById("audio");
-let lyricsDiv = document.getElementById("lyrics");
+let lyricDiv = document.getElementById("lyric");
 let progress = document.getElementById("progress");
 let time = document.getElementById("time");
 
-let lrcData = [];
+let dataLrc=[];
 
 function playMusic(src,lrc,cover,title,artist){
   document.getElementById("player").classList.add("active");
-  audio.src = src;
-  document.getElementById("cover").src = cover;
-  document.getElementById("title").innerText = title;
-  document.getElementById("artist").innerText = artist;
-  
+  document.getElementById("list").style.display="none";
+
+  audio.src=src;
+  document.getElementById("cover").src=cover;
+  document.getElementById("title").innerText=title;
+  document.getElementById("artist").innerText=artist;
+
   fetch(lrc)
   .then(res=>res.text())
   .then(data=>{
-    lrcData = parseLRC(data);
-    renderLyrics();
+    dataLrc=parse(data);
+    showLyric();
   });
 
   audio.play();
 }
 
-function parseLRC(data){
-  let lines = data.split("\n");
-  let result = [];
-  lines.forEach(line=>{
-    let match = line.match(/\[(\d+):(\d+).(\d+)\](.*)/);
-    if(match){
-      let time = parseInt(match[1])*60 + parseInt(match[2]);
-      result.push({time:textToSec(match),text:match[4]});
+function parse(data){
+  let arr=[];
+  data.split("\n").forEach(line=>{
+    let m=line.match(/\[(\d+):(\d+)\]/);
+    if(m){
+      let t=parseInt(m[1])*60+parseInt(m[2]);
+      arr.push({time:t,text:line.split("]")[1]});
     }
   });
-  return result;
+  return arr;
 }
 
-function textToSec(m){
-  return parseInt(m[1])*60 + parseInt(m[2]);
-}
-
-function renderLyrics(){
-  lyricsDiv.innerHTML = "";
-  lrcData.forEach(l=>{
-    let p = document.createElement("p");
-    p.innerText = l.text;
-    lyricsDiv.appendChild(p);
+function showLyric(){
+  lyricDiv.innerHTML="";
+  dataLrc.forEach(l=>{
+    let p=document.createElement("p");
+    p.innerText=l.text;
+    lyricDiv.appendChild(p);
   });
 }
 
-audio.ontimeupdate = ()=>{
-  let current = audio.currentTime;
-  let duration = audio.duration;
+audio.ontimeupdate=()=>{
+  let c=audio.currentTime;
+  let d=audio.duration;
 
-  progress.value = (current/duration)*100 || 0;
+  progress.value=(c/d)*100||0;
+  time.innerText=format(c)+" / "+format(d);
 
-  time.innerText = format(current)+" / "+format(duration);
+  let i=dataLrc.findIndex(x=>c<x.time)-1;
+  if(i<0)i=0;
 
-  let index = lrcData.findIndex((l,i)=> current < l.time) -1;
-  if(index < 0) index = 0;
+  let all=lyricDiv.querySelectorAll("p");
+  all.forEach(e=>e.classList.remove("active"));
 
-  let all = lyricsDiv.querySelectorAll("p");
-  all.forEach(el=>el.classList.remove("active"));
-
-  if(all[index]){
-    all[index].classList.add("active");
-    lyricsDiv.style.transform = `translateY(-${index*28}px)`;
+  if(all[i]){
+    all[i].classList.add("active");
+    lyricDiv.style.transform=`translateY(-${i*25}px)`;
   }
 }
 
-function format(t){
-  let m = Math.floor(t/60);
-  let s = Math.floor(t%60);
-  if(s<10) s="0"+s;
-  return m+":"+s;
+progress.oninput=()=>{
+  audio.currentTime=(progress.value/100)*audio.duration;
 }
 
-progress.oninput = ()=>{
-  audio.currentTime = (progress.value/100)*audio.duration;
+function format(t){
+  let m=Math.floor(t/60);
+  let s=Math.floor(t%60);
+  if(s<10)s="0"+s;
+  return m+":"+s;
 }
 
 function toggle(){
   if(audio.paused) audio.play();
   else audio.pause();
+}
+
+function back(){
+  document.getElementById("player").classList.remove("active");
+  document.getElementById("list").style.display="block";
+  audio.pause();
 }
 </script>
 
