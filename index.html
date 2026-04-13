@@ -1,274 +1,198 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Lirik Lagu</title>
+<title>Music Web</title>
 
-  <style>
-    body {
-      margin: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
 
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+<style>
+body{
+  margin:0;
+  font-family:'Poppins', sans-serif;
+  color:white;
+}
 
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+/* PAGE */
+.page{
+  width:100%;
+  height:100vh;
+  position:absolute;
+  top:0;
+  left:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  transition:0.5s;
+}
 
-      color: white;
-      font-family: 'Times New Roman', serif;
-      text-align: center;
-      transition: 0.5s;
-    }
+/* HOME */
+#home{
+  background:url('bg.jpg') center/cover;
+}
 
-    #dev {
-      position: fixed;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 12px;
-      opacity: 0;
-      animation: fade 5s ease forwards;
-    }
+.header{
+  position:absolute;
+  top:0;
+  width:100%;
+  padding:15px;
+  background:rgba(0,0,0,0.4);
+  text-align:left;
+}
 
-    @keyframes fade {
-      0% {opacity:0;}
-      20% {opacity:1;}
-      80% {opacity:1;}
-      100% {opacity:0;}
-    }
+.song{
+  width:90%;
+  background:black;
+  margin:10px;
+  padding:10px;
+  display:flex;
+  align-items:center;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.3s;
+}
 
-    #cover {
-      width: 140px;
-      height: 140px;
-      border-radius: 15px;
-      object-fit: cover;
-      margin-bottom: 10px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.5);
-    }
+.song:hover{
+  transform:scale(1.03);
+}
 
-    #judul {
-      font-size: 26px;
-      margin: 5px;
-    }
+.song img{
+  width:60px;
+  height:60px;
+  border-radius:10px;
+  margin-right:10px;
+}
 
-    #artist {
-      font-size: 14px;
-      opacity: 0.8;
-    }
+.play{
+  margin-left:auto;
+  font-size:20px;
+}
 
-    #lyrics-container {
-      height: 160px;
-      width: 100%;
-      overflow: hidden;
-      position: relative;
-      margin-top: 10px;
-    }
+/* PLAYER */
+#player{
+  background-size:cover;
+  background-position:center;
+  display:none;
+}
 
-    #lyrics {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: transform 0.5s ease;
-    }
+#cover{
+  width:150px;
+  border-radius:15px;
+  margin-bottom:10px;
+}
 
-    .line {
-      opacity: 0.3;
-      font-size: 18px;
-      margin: 6px 0;
-      transition: 0.3s;
-    }
+#judul{
+  font-size:22px;
+}
 
-    .active {
-      opacity: 1;
-      font-size: 24px;
-      transform: scale(1.15);
-    }
+#artist{
+  font-size:14px;
+  opacity:0.8;
+}
 
-    #controls {
-      margin-top: 15px;
-    }
+button{
+  margin:5px;
+  padding:10px;
+  border:none;
+  border-radius:50%;
+}
 
-    button {
-      margin: 5px;
-      padding: 10px 15px;
-      border-radius: 50%;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-    }
-
-    #progress {
-      width: 70%;
-      margin-top: 10px;
-    }
-
-    #time {
-      font-size: 14px;
-      margin-top: 5px;
-      opacity: 0.8;
-    }
-  </style>
+</style>
 </head>
 
 <body>
 
-<div id="dev">developed by r4ul & jena</div>
+<!-- HOME -->
+<div id="home" class="page">
+
+<div class="header">
+<h3>welcome to my music</h3>
+<p>follow tiktok lu disini</p>
+</div>
+
+<div class="song" onclick="openPlayer(0)">
+<img src="cover.png">
+<div>
+<b>Sayang</b><br>
+<small>Shae</small>
+</div>
+<div class="play">▶️</div>
+</div>
+
+<div class="song" onclick="openPlayer(1)">
+<img src="hujanpict.png">
+<div>
+<b>Sedia Aku Sebelum Hujan</b><br>
+<small>Ebiet G. Ade</small>
+</div>
+<div class="play">▶️</div>
+</div>
+
+</div>
+
+<!-- PLAYER -->
+<div id="player" class="page">
 
 <img id="cover">
 <h1 id="judul"></h1>
 <div id="artist"></div>
 
-<div id="lyrics-container">
-  <div id="lyrics"></div>
-</div>
-
 <audio id="audio"></audio>
 
-<div id="controls">
-  <button onclick="prevSong()">◀️</button>
-  <button onclick="togglePlay()">⏯️</button>
-  <button onclick="nextSong()">▶️</button>
+<div>
+<button onclick="back()">⬅️</button>
+<button onclick="toggle()">⏯️</button>
 </div>
 
-<input type="range" id="progress" value="0">
-<div id="time">0:00 / 0:00</div>
+</div>
 
 <script>
-const songs = [
-  {
-    title: "Sayang",
-    artist: "Shae",
-    file: "lagu.mp3",
-    lrc: "lagu.lrc",
-    cover: "cover.png",
-    bg: "bg.jpg"
-  },
-  {
-    title: "Sedia Aku Sebelum Hujan",
-    artist: "Ebiet G. Ade",
-    file: "hujan.mp3",
-    lrc: "hujan.lrc",
-    cover: "hujanpict.png",
-    bg: "blue.jpg"
-  }
+const songs=[
+{
+title:"Sayang",
+artist:"Shae",
+file:"lagu.mp3",
+cover:"cover.png",
+bg:"bg.jpg"
+},
+{
+title:"Sedia Aku Sebelum Hujan",
+artist:"Ebiet G. Ade",
+file:"hujan.mp3",
+cover:"hujanpict.png",
+bg:"blue.jpg"
+}
 ];
 
-let audio = document.getElementById("audio");
-let lyrics = [];
-let index = 0;
-let currentSong = 0;
+let audio=document.getElementById("audio");
 
-function loadSong(i){
-  let s = songs[i];
+function openPlayer(i){
+let s=songs[i];
 
-  audio.src = s.file;
-  audio.load();
+document.getElementById("home").style.display="none";
+document.getElementById("player").style.display="flex";
 
-  document.getElementById("cover").src = s.cover;
-  document.getElementById("judul").innerText = s.title;
-  document.getElementById("artist").innerText = s.artist;
+document.getElementById("cover").src=s.cover;
+document.getElementById("judul").innerText=s.title;
+document.getElementById("artist").innerText=s.artist;
 
-  document.body.style.background =
-    `linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.8)), url('${s.bg}')`;
+document.getElementById("player").style.background=
+`linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.9)),url(${s.bg})`;
 
-  fetch(s.lrc + "?v=" + Date.now())
-    .then(r=>r.text())
-    .then(data=>{
-      lyrics=[];
-      data.split("\n").forEach(line=>{
-        let m=line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-        if(m){
-          lyrics.push({
-            time: parseInt(m[1])*60+parseFloat(m[2]),
-            text: m[3]
-          });
-        }
-      });
-      renderLyrics(0);
-    });
+audio.src=s.file;
+audio.play();
 }
 
-function togglePlay(){
-  if(audio.paused) audio.play();
-  else audio.pause();
+function toggle(){
+if(audio.paused) audio.play();
+else audio.pause();
 }
 
-function nextSong(){
-  currentSong = (currentSong + 1) % songs.length;
-  loadSong(currentSong);
-  audio.play();
+function back(){
+audio.pause();
+document.getElementById("player").style.display="none";
+document.getElementById("home").style.display="flex";
 }
-
-function prevSong(){
-  currentSong = (currentSong - 1 + songs.length) % songs.length;
-  loadSong(currentSong);
-  audio.play();
-}
-
-function renderLyrics(activeIndex){
-  const container = document.getElementById("lyrics");
-  container.innerHTML = "";
-
-  let activeEl = null;
-
-  lyrics.forEach((l,i)=>{
-    let div = document.createElement("div");
-    div.innerText = l.text;
-    div.className = i===activeIndex ? "active" : "line";
-
-    if(i===activeIndex) activeEl = div;
-
-    container.appendChild(div);
-  });
-
-  if(activeEl){
-    const parent = document.getElementById("lyrics-container");
-    const offset = activeEl.offsetTop - parent.clientHeight/2 + activeEl.clientHeight/2;
-    container.style.transform = `translateY(-${offset}px)`;
-  }
-}
-
-audio.onloadedmetadata = ()=>{
-  document.getElementById("progress").max = audio.duration;
-};
-
-audio.ontimeupdate = ()=>{
-  let t = audio.currentTime;
-  let d = audio.duration;
-
-  if(!isNaN(d)){
-    document.getElementById("progress").value = t;
-
-    function format(s){
-      let m = Math.floor(s/60);
-      let sec = Math.floor(s%60);
-      return m + ":" + (sec<10?"0":"") + sec;
-    }
-
-    document.getElementById("time").innerText =
-      format(t) + " / " + format(d);
-  }
-
-  for(let i=0;i<lyrics.length;i++){
-    if(t>=lyrics[i].time && (!lyrics[i+1]||t<lyrics[i+1].time)){
-      if(index !== i){
-        index = i;
-        renderLyrics(i);
-      }
-    }
-  }
-};
-
-document.getElementById("progress").oninput = (e)=>{
-  audio.currentTime = e.target.value;
-};
-
-loadSong(0);
 </script>
 
 </body>
