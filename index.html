@@ -3,296 +3,320 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Music</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
-
+*{margin:0;padding:0;box-sizing:border-box}
 body{
-  height:100vh;
+  font-family:sans-serif;
   overflow:hidden;
-  color:white;
 }
 
-/* ===== HALAMAN LIST ===== */
+/* LIST PAGE */
 .listPage{
   height:100vh;
-  background:url('hadzx.jpg') center/cover no-repeat;
+  background-image:url('./hadzx.jpg'); /* FIX ANTI ABU */
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  flex-direction:column;
   padding:20px;
+  color:#fff;
 }
 
-/* overlay dark */
+/* overlay biar dark */
 .listPage::before{
-  content:"";
+  content:'';
   position:absolute;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.7);
-  top:0;
-  left:0;
-}
-
-/* header */
-.header{
-  position:relative;
-  text-align:center;
-  margin-bottom:30px;
-}
-.header h2{font-weight:600;}
-.header p{opacity:.7;font-size:14px;}
-
-/* list */
-.item{
-  position:relative;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  inset:0;
   background:rgba(0,0,0,0.5);
-  padding:12px;
-  border-radius:15px;
-  margin-bottom:15px;
-  backdrop-filter:blur(10px);
 }
 
-.left{
+/* biar konten di atas overlay */
+.listPage *{
+  position:relative;
+}
+
+.header{
+  text-align:center;
+  margin-top:10px;
+}
+
+.header h2{
+  font-size:20px;
+}
+.header p{
+  font-size:12px;
+  opacity:0.7;
+}
+
+/* LIST LAGU */
+.song{
   display:flex;
   align-items:center;
-  gap:10px;
-}
-.left img{
-  width:50px;height:50px;border-radius:10px;
-}
-
-.play{
-  background:#ff9800;
-  border:none;
+  justify-content:space-between;
+  background:rgba(0,0,0,0.6);
   padding:10px;
-  border-radius:10px;
-  color:white;
+  border-radius:12px;
+  margin-top:15px;
 }
 
-/* ===== PLAYER ===== */
-.playerPage{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+.song img{
+  width:50px;
+  height:50px;
+  border-radius:10px;
+}
+
+.song .info{
+  flex:1;
+  margin-left:10px;
+}
+
+.song button{
+  background:#ff9900;
+  border:none;
+  padding:8px;
+  border-radius:8px;
+  color:#fff;
+}
+
+/* PLAYER */
+.player{
+  position:absolute;
+  inset:0;
   display:none;
+  flex-direction:column;
   justify-content:center;
   align-items:center;
-  background:url('blue.jpg') center/cover no-repeat;
-}
-
-.playerPage::before{
-  content:"";
-  position:absolute;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.6);
-}
-
-.player{
-  position:relative;
+  color:#fff;
   text-align:center;
 }
 
-/* cover */
+.player.active{
+  display:flex;
+}
+
+/* BACKGROUND PLAYER */
+.player::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:url('./hadzx.jpg'); /* FIX ANTI ABU */
+  background-size:cover;
+  background-position:center;
+  filter:brightness(0.4);
+}
+
+/* biar di atas bg */
+.player *{
+  position:relative;
+}
+
+/* COVER */
 .cover{
-  width:120px;
-  height:120px;
+  width:130px;
+  height:130px;
   border-radius:20px;
-  margin:auto;
-  transition:.5s;
+  transition:0.5s;
+  opacity:0.8;
 }
 
-/* animasi */
 .playing .cover{
-  animation:spin 6s linear infinite;
-}
-@keyframes spin{
-  from{transform:rotate(0)}
-  to{transform:rotate(360deg)}
+  transform:scale(1.1);
+  opacity:1;
 }
 
-/* lirik */
-.lirik{
-  margin-top:20px;
-  height:120px;
-  overflow:hidden;
-}
-.lirik p{opacity:.5;}
-.active{
-  opacity:1;
+/* TITLE */
+.title{
+  margin-top:15px;
   font-size:18px;
 }
 
-/* progress */
-input[type=range]{width:90%;margin-top:10px;}
+/* LIRIK */
+.lyrics{
+  margin-top:20px;
+  height:100px;
+  overflow:hidden;
+  font-size:14px;
+  opacity:0.7;
+}
 
-button{
-  margin-top:10px;
-  padding:10px;
+.lyrics div{
+  transition:0.3s;
+}
+
+.activeLine{
+  color:#fff;
+  font-size:16px;
+}
+
+/* CONTROL */
+.controls{
+  margin-top:20px;
+}
+
+.controls button{
+  background:#fff;
   border:none;
-  border-radius:10px;
+  padding:10px;
+  border-radius:50%;
+}
+
+/* PROGRESS */
+input[type=range]{
+  width:80%;
+  margin-top:15px;
+}
+
+.back{
+  position:absolute;
+  top:20px;
+  left:20px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== LIST ===== -->
+<!-- LIST -->
 <div class="listPage" id="listPage">
   <div class="header">
     <h2>welcome to my music</h2>
     <p>clone h4dxz</p>
   </div>
 
-  <div class="item" onclick="playMusic(0)">
-    <div class="left">
-      <img src="cover.png">
-      <div>
-        <b>Sayang</b><br>
-        <small>Shae</small>
-      </div>
+  <div class="song">
+    <img src="cover.png">
+    <div class="info">
+      <b>Sayang</b><br>
+      <small>Shae</small>
     </div>
-    <button class="play">▶</button>
+    <button onclick="playSong(0)">▶</button>
   </div>
 
-  <div class="item" onclick="playMusic(1)">
-    <div class="left">
-      <img src="hujanpict.png">
-      <div>
-        <b>Sedia Aku Sebelum Hujan</b><br>
-        <small>Ebiet G. Ade</small>
-      </div>
+  <div class="song">
+    <img src="hujanpict.png">
+    <div class="info">
+      <b>Sedia Aku Sebelum Hujan</b><br>
+      <small>Ebiet G. Ade</small>
     </div>
-    <button class="play">▶</button>
+    <button onclick="playSong(1)">▶</button>
   </div>
 </div>
 
-<!-- ===== PLAYER ===== -->
-<div class="playerPage" id="playerPage">
-  <div class="player" id="player">
+<!-- PLAYER -->
+<div class="player" id="player">
+  <button class="back" onclick="back()">⬅</button>
 
-    <img id="cover" class="cover">
+  <img class="cover" id="cover">
 
-    <h2 id="title"></h2>
-    <p id="artist"></p>
+  <div class="title" id="title"></div>
 
-    <div class="lirik" id="lirik"></div>
+  <div class="lyrics" id="lyrics"></div>
 
-    <button onclick="toggle()">⏯</button><br>
-
-    <input type="range" id="progress">
-
-    <br>
-    <button onclick="back()">⬅</button>
-
-    <audio id="audio"></audio>
+  <div class="controls">
+    <button onclick="toggle()">⏯</button>
   </div>
+
+  <input type="range" id="progress" value="0">
 </div>
+
+<audio id="audio"></audio>
 
 <script>
-const audio = document.getElementById("audio")
-const progress = document.getElementById("progress")
-const lirikBox = document.getElementById("lirik")
-const player = document.getElementById("player")
-
-const listPage = document.getElementById("listPage")
-const playerPage = document.getElementById("playerPage")
-
-let lirik=[]
-
 const songs=[
 {
- title:"Sayang",
- artist:"Shae",
- src:"lagu.mp3",
- cover:"cover.png",
- lrc:"lagu.lrc"
+  title:"Sayang",
+  file:"lagu.mp3",
+  cover:"cover.png",
+  lrc:"lagu.lrc"
 },
 {
- title:"Sedia Aku Sebelum Hujan",
- artist:"Ebiet G. Ade",
- src:"hujan.mp3",
- cover:"hujanpict.png",
- lrc:"hujan.lrc"
+  title:"Sedia Aku Sebelum Hujan",
+  file:"hujan.mp3",
+  cover:"hujanpict.png",
+  lrc:"hujan.lrc"
 }
 ]
 
-function playMusic(i){
- let s=songs[i]
+let audio=document.getElementById("audio")
+let player=document.getElementById("player")
+let list=document.getElementById("listPage")
+let cover=document.getElementById("cover")
+let title=document.getElementById("title")
+let progress=document.getElementById("progress")
+let lyricsBox=document.getElementById("lyrics")
 
- listPage.style.display="none"
- playerPage.style.display="flex"
+let lrc=[]
 
- audio.src=s.src
- document.getElementById("cover").src=s.cover
- document.getElementById("title").innerText=s.title
- document.getElementById("artist").innerText=s.artist
+function playSong(i){
+  let s=songs[i]
 
- fetch(s.lrc)
- .then(r=>r.text())
- .then(text=>{
-   lirik=parseLRC(text)
- })
+  audio.src=s.file
+  cover.src=s.cover
+  title.innerText=s.title
 
- audio.play()
- player.classList.add("playing")
-}
+  fetch(s.lrc)
+  .then(r=>r.text())
+  .then(text=>{
+    lrc=parseLRC(text)
+  })
 
-function back(){
- playerPage.style.display="none"
- listPage.style.display="block"
- audio.pause()
-}
+  list.style.display="none"
+  player.classList.add("active")
 
-/* lrc parser */
-function parseLRC(text){
- let lines=text.split("\n")
- let result=[]
- lines.forEach(line=>{
-  let match=line.match(/\[(\d+):(\d+)\.(\d+)\](.*)/)
-  if(match){
-   let time=parseInt(match[1])*60+parseInt(match[2])
-   result.push({time,text:match[4]})
-  }
- })
- return result
+  audio.play()
 }
 
 function toggle(){
- if(audio.paused){
-  audio.play()
-  player.classList.add("playing")
- }else{
-  audio.pause()
-  player.classList.remove("playing")
- }
+  if(audio.paused){
+    audio.play()
+  }else{
+    audio.pause()
+  }
 }
 
-/* update */
+function back(){
+  audio.pause()
+  player.classList.remove("active")
+  list.style.display="flex"
+}
+
+/* progress */
 audio.ontimeupdate=()=>{
- progress.value=(audio.currentTime/audio.duration)*100
+  progress.value=(audio.currentTime/audio.duration)*100
 
- let current=audio.currentTime
- let html=""
-
- lirik.forEach(l=>{
-  if(current>=l.time){
-    html=`<p class="active">${l.text}</p>`
-  }
- })
-
- lirikBox.innerHTML=html
+  updateLyrics()
 }
 
 progress.oninput=()=>{
- audio.currentTime=(progress.value/100)*audio.duration
+  audio.currentTime=(progress.value/100)*audio.duration
+}
+
+/* LRC PARSER */
+function parseLRC(text){
+  let lines=text.split("\n")
+  return lines.map(l=>{
+    let match=l.match(/\[(\d+):(\d+)\.(\d+)\](.*)/)
+    if(!match) return null
+    return {
+      time:parseInt(match[1])*60+parseInt(match[2]),
+      text:match[4]
+    }
+  }).filter(Boolean)
+}
+
+/* UPDATE LIRIK */
+function updateLyrics(){
+  let t=audio.currentTime
+  let html=""
+
+  lrc.forEach((l,i)=>{
+    let active = t>=l.time && (!lrc[i+1] || t<lrc[i+1].time)
+    html+=`<div class="${active?'activeLine':''}">${l.text}</div>`
+  })
+
+  lyricsBox.innerHTML=html
 }
 </script>
 
