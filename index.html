@@ -12,11 +12,11 @@
       justify-content: center;
       align-items: center;
 
-      background: linear-gradient(rgba(150,0,0,0.7), rgba(150,0,0,0.7)),
+      background: linear-gradient(rgba(150,0,0,0.7), rgba(0,0,0,0.7)),
                   url('bg.jpg');
       background-size: cover;
       background-position: center;
-      animation: gerakBG 20s ease-in-out infinite;
+      animation: gerakBG 15s ease-in-out infinite;
 
       color: white;
       font-family: 'Times New Roman', serif;
@@ -29,8 +29,20 @@
       100% { background-position: center top; }
     }
 
+    #judul {
+      font-size: 32px;
+      text-shadow: 0 0 15px white;
+      margin-bottom: 5px;
+    }
+
+    #artist {
+      font-size: 16px;
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+
     #lyrics {
-      font-size: 22px;
+      font-size: 24px;
       min-height: 60px;
       transition: all 0.5s ease;
     }
@@ -38,27 +50,47 @@
     button {
       margin-top: 20px;
       font-size: 20px;
-      padding: 12px 20px;
+      padding: 12px 25px;
       border-radius: 30px;
       border: none;
       background: white;
       color: red;
+      cursor: pointer;
     }
 
     #progress {
-      width: 60%;
+      width: 70%;
+      margin-top: 15px;
     }
 
     #time {
       font-size: 14px;
       margin-top: 5px;
+      opacity: 0.8;
+    }
+
+    #sticker {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 80px;
+      animation: goyang 2s infinite;
+    }
+
+    @keyframes goyang {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(8deg); }
+      100% { transform: rotate(0deg); }
     }
   </style>
 </head>
 
 <body>
 
-<div id="lyrics">⏳ loading dulu...</div>
+<h1 id="judul">Sayang</h1>
+<div id="artist">Shae</div>
+
+<div id="lyrics">⏳ loading...</div>
 
 <audio id="audio" preload="auto">
   <source src="lagu.mp3" type="audio/mpeg">
@@ -68,6 +100,8 @@
 
 <input type="range" id="progress" value="0">
 <div id="time">0:00 / 0:00</div>
+
+<img src="sticker.png" id="sticker">
 
 <script>
 const audio = document.getElementById("audio");
@@ -96,7 +130,7 @@ fetch("lagu.lrc?v=" + new Date().getTime())
     });
   });
 
-/* CEK AUDIO SIAP */
+/* READY */
 audio.addEventListener("canplaythrough", () => {
   ready = true;
   btn.disabled = false;
@@ -135,7 +169,16 @@ audio.addEventListener("timeupdate", () => {
 
   for (let i=0;i<lyrics.length;i++){
     if(t >= lyrics[i].time && (i==lyrics.length-1 || t < lyrics[i+1].time)){
-      display.innerText = lyrics[i].text;
+      if(display.innerText !== lyrics[i].text){
+        display.style.opacity = 0;
+        display.style.transform = "scale(0.8)";
+
+        setTimeout(()=>{
+          display.innerText = lyrics[i].text;
+          display.style.opacity = 1;
+          display.style.transform = "scale(1)";
+        },150);
+      }
     }
   }
 });
@@ -145,9 +188,10 @@ progress.addEventListener("input", ()=>{
   audio.currentTime = progress.value;
 });
 
-/* ANTI NGULANG */
+/* END */
 audio.addEventListener("ended", ()=>{
   btn.innerText = "▶";
+  display.style.opacity = 0;
 });
 </script>
 
