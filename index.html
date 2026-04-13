@@ -29,6 +29,24 @@
       100% { background-position: center top; }
     }
 
+    /* 🔥 TEXT DEV */
+    #dev {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 13px;
+      opacity: 0.7;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px white;
+      animation: fadeDev 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes fadeDev {
+      0% { opacity: 0.4; }
+      100% { opacity: 0.9; }
+    }
+
     #judul {
       font-size: 30px;
       text-shadow: 0 0 15px white;
@@ -70,11 +88,13 @@
 
     button {
       margin-top: 20px;
-      padding: 10px 20px;
+      padding: 10px 25px;
       border-radius: 30px;
       border: none;
       background: white;
       color: red;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255,255,255,0.6);
     }
 
     #progress {
@@ -90,6 +110,8 @@
 </head>
 
 <body>
+
+<div id="dev">developed by r4ul & jena</div>
 
 <h1 id="judul">Sayang</h1>
 <div id="artist">Shae</div>
@@ -161,7 +183,7 @@ function format(sec){
   return m + ":" + (s<10?"0"+s:s);
 }
 
-/* RENDER (REAL CENTER) */
+/* RENDER CENTER */
 function renderLyrics(activeIndex){
   display.innerHTML = "";
 
