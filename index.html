@@ -12,8 +12,8 @@
       justify-content: center;
       align-items: center;
 
-      background: linear-gradient(rgba(150,0,0,0.7), rgba(0,0,0,0.8)),
-                  url('bg.jpg');
+      background: linear-gradient(rgba(0,100,255,0.6), rgba(0,0,50,0.9)),
+                  url('bg2.jpg');
       background-size: cover;
       background-position: center;
       animation: gerakBG 15s ease-in-out infinite;
@@ -35,24 +35,25 @@
       left: 50%;
       transform: translateX(-50%);
       font-size: 13px;
-      opacity: 0.8;
+      opacity: 0;
       text-shadow: 0 0 8px white;
-      animation: fadeOut 4s ease forwards;
+      animation: devIntro 5s ease forwards;
     }
 
-    @keyframes fadeOut {
+    @keyframes devIntro {
       0% { opacity: 0; }
       20% { opacity: 1; }
+      80% { opacity: 1; }
       100% { opacity: 0; }
     }
 
     #cover {
-      width: 140px;
-      height: 140px;
+      width: 150px;
+      height: 150px;
       object-fit: cover;
       border-radius: 15px;
       margin-bottom: 15px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.5);
+      box-shadow: 0 0 25px rgba(0,150,255,0.6);
       animation: zoomCover 5s ease-in-out infinite;
     }
 
@@ -64,7 +65,7 @@
 
     #judul {
       font-size: 28px;
-      text-shadow: 0 0 15px white;
+      text-shadow: 0 0 15px #4da6ff;
       margin: 5px 0;
     }
 
@@ -75,7 +76,7 @@
     }
 
     #lyrics-container {
-      height: 140px;
+      height: 150px;
       width: 80%;
       overflow: hidden;
       position: relative;
@@ -88,12 +89,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+      transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
     }
 
     .line {
       font-size: 18px;
-      opacity: 0.4;
+      opacity: 0.2;
       margin: 5px 0;
       transition: all 0.3s ease;
     }
@@ -102,7 +103,7 @@
       font-size: 24px;
       opacity: 1;
       transform: scale(1.15);
-      text-shadow: 0 0 12px white;
+      text-shadow: 0 0 15px #4da6ff;
     }
 
     button {
@@ -111,7 +112,7 @@
       border-radius: 30px;
       border: none;
       background: white;
-      color: red;
+      color: blue;
       cursor: pointer;
       box-shadow: 0 0 10px rgba(255,255,255,0.6);
     }
@@ -132,17 +133,17 @@
 
 <div id="dev">developed by r4ul & jena</div>
 
-<img id="cover" src="cover.png">
+<img id="cover" src="cover2.png">
 
-<h1 id="judul">Sayang</h1>
-<div id="artist">Shae</div>
+<h1 id="judul">Sedia Aku Sebelum Hujan</h1>
+<div id="artist">Ebiet G. Ade</div>
 
 <div id="lyrics-container">
   <div id="lyrics"></div>
 </div>
 
 <audio id="audio" preload="auto">
-  <source src="lagu.mp3">
+  <source src="lagu2.mp3">
 </audio>
 
 <button id="btn" disabled>Loading...</button>
@@ -161,7 +162,7 @@ const container = document.getElementById("lyrics-container");
 let lyrics = [];
 let currentIndex = 0;
 
-fetch("lagu.lrc?v=" + new Date().getTime())
+fetch("lagu2.lrc?v=" + new Date().getTime())
   .then(res => res.text())
   .then(data => {
     const lines = data.split("\n");
