@@ -37,9 +37,7 @@
     #lyrics {
       font-size: 22px;
       min-height: 60px;
-      transition: all 0.6s ease;
-      opacity: 1;
-      transform: scale(1);
+      transition: all 0.5s ease;
     }
 
     .player button {
@@ -50,6 +48,10 @@
       border: none;
       background: white;
       color: red;
+    }
+
+    #progress {
+      width: 60%;
     }
 
     #pojok {
@@ -91,16 +93,26 @@
   <button id="btn">▶</button>
 </div>
 
+<!-- PROGRESS BAR -->
+<div style="width:80%; margin-top:15px;">
+  <span id="current">0:00</span>
+  <input type="range" id="progress" value="0" step="1">
+  <span id="duration">0:00</span>
+</div>
+
 <img src="sticker.png" id="sticker">
 
 <script>
 const audio = document.getElementById("audio");
 const display = document.getElementById("lyrics");
 const btn = document.getElementById("btn");
+const progress = document.getElementById("progress");
+const current = document.getElementById("current");
+const duration = document.getElementById("duration");
 
 let lyrics = [];
 
-/* LOAD LRC (ANTI CACHE) */
+/* LOAD LRC */
 fetch("lagu.lrc?v=" + new Date().getTime())
   .then(res => res.text())
   .then(data => {
@@ -111,11 +123,10 @@ fetch("lagu.lrc?v=" + new Date().getTime())
       if (match) {
         let min = parseInt(match[1]);
         let sec = parseFloat(match[2]);
-        let text = match[3].trim();
 
         lyrics.push({
           time: min * 60 + sec,
-          text: text
+          text: match[3].trim()
         });
       }
     });
@@ -132,14 +143,22 @@ btn.addEventListener("click", () => {
   }
 });
 
-/* SYNC LIRIK FIX */
+/* PROGRESS */
+audio.addEventListener("loadedmetadata", () => {
+  progress.max = Math.floor(audio.duration);
+  duration.innerText = formatTime(audio.duration);
+});
+
 audio.addEventListener("timeupdate", () => {
-  let current = audio.currentTime;
+  progress.value = Math.floor(audio.currentTime);
+  current.innerText = formatTime(audio.currentTime);
+
+  let currentTime = audio.currentTime;
 
   for (let i = 0; i < lyrics.length; i++) {
     if (
-      current >= lyrics[i].time &&
-      (i === lyrics.length - 1 || current < lyrics[i + 1].time)
+      currentTime >= lyrics[i].time &&
+      (i === lyrics.length - 1 || currentTime < lyrics[i + 1].time)
     ) {
       if (display.innerText !== lyrics[i].text) {
 
@@ -150,11 +169,23 @@ audio.addEventListener("timeupdate", () => {
           display.innerText = lyrics[i].text;
           display.style.opacity = 1;
           display.style.transform = "scale(1)";
-        }, 200);
+        }, 150);
       }
     }
   }
 });
+
+/* DRAG BAR */
+progress.addEventListener("input", () => {
+  audio.currentTime = progress.value;
+});
+
+/* FORMAT TIME */
+function formatTime(sec) {
+  let m = Math.floor(sec / 60);
+  let s = Math.floor(sec % 60);
+  return m + ":" + (s < 10 ? "0" + s : s);
+}
 
 /* HILANG DI AKHIR */
 audio.addEventListener("ended", () => {
