@@ -12,7 +12,7 @@
       justify-content: center;
       align-items: center;
 
-      background: linear-gradient(rgba(150,0,0,0.7), rgba(0,0,0,0.7)),
+      background: linear-gradient(rgba(150,0,0,0.7), rgba(0,0,0,0.8)),
                   url('bg.jpg');
       background-size: cover;
       background-position: center;
@@ -29,39 +29,58 @@
       100% { background-position: center top; }
     }
 
-    /* 🔥 TEXT DEV */
     #dev {
       position: fixed;
       top: 12px;
       left: 50%;
       transform: translateX(-50%);
       font-size: 13px;
-      opacity: 0.7;
-      letter-spacing: 1px;
+      opacity: 0.8;
       text-shadow: 0 0 8px white;
-      animation: fadeDev 3s ease-in-out infinite alternate;
+      animation: fadeOut 4s ease forwards;
     }
 
-    @keyframes fadeDev {
-      0% { opacity: 0.4; }
-      100% { opacity: 0.9; }
+    @keyframes fadeOut {
+      0% { opacity: 0; }
+      20% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    #cover {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.5);
+      animation: zoomCover 5s ease-in-out infinite;
+    }
+
+    @keyframes zoomCover {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
     }
 
     #judul {
-      font-size: 30px;
+      font-size: 28px;
       text-shadow: 0 0 15px white;
+      margin: 5px 0;
     }
 
     #artist {
       font-size: 14px;
       opacity: 0.8;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
 
     #lyrics-container {
       height: 140px;
+      width: 80%;
       overflow: hidden;
       position: relative;
+      margin-top: 10px;
+
       mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);
     }
 
@@ -73,14 +92,14 @@
     }
 
     .line {
-      font-size: 20px;
+      font-size: 18px;
       opacity: 0.4;
-      margin: 6px 0;
+      margin: 5px 0;
       transition: all 0.3s ease;
     }
 
     .active {
-      font-size: 26px;
+      font-size: 24px;
       opacity: 1;
       transform: scale(1.15);
       text-shadow: 0 0 12px white;
@@ -113,6 +132,8 @@
 
 <div id="dev">developed by r4ul & jena</div>
 
+<img id="cover" src="cover.png">
+
 <h1 id="judul">Sayang</h1>
 <div id="artist">Shae</div>
 
@@ -140,7 +161,6 @@ const container = document.getElementById("lyrics-container");
 let lyrics = [];
 let currentIndex = 0;
 
-/* LOAD LRC */
 fetch("lagu.lrc?v=" + new Date().getTime())
   .then(res => res.text())
   .then(data => {
@@ -159,13 +179,11 @@ fetch("lagu.lrc?v=" + new Date().getTime())
     renderLyrics(0);
   });
 
-/* READY */
 audio.addEventListener("canplaythrough", () => {
   btn.disabled = false;
   btn.innerText = "▶";
 });
 
-/* PLAY */
 btn.addEventListener("click", () => {
   if (audio.paused) {
     audio.play();
@@ -176,14 +194,12 @@ btn.addEventListener("click", () => {
   }
 });
 
-/* FORMAT */
 function format(sec){
   let m = Math.floor(sec/60);
   let s = Math.floor(sec%60);
   return m + ":" + (s<10?"0"+s:s);
 }
 
-/* RENDER CENTER */
 function renderLyrics(activeIndex){
   display.innerHTML = "";
 
@@ -208,7 +224,6 @@ function renderLyrics(activeIndex){
   }
 }
 
-/* UPDATE */
 audio.addEventListener("timeupdate", () => {
   let t = audio.currentTime;
 
@@ -227,12 +242,10 @@ audio.addEventListener("timeupdate", () => {
   }
 });
 
-/* DRAG */
 progress.addEventListener("input", ()=>{
   audio.currentTime = progress.value;
 });
 
-/* END */
 audio.addEventListener("ended", ()=>{
   btn.innerText = "▶";
 });
