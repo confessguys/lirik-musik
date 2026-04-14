@@ -1,30 +1,24 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Music</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 
 body{
-  height:100vh;
   color:white;
   overflow:hidden;
 }
 
-/* BACKGROUND */
+/* BG FIX */
 #bg{
   position:fixed;
   inset:0;
-  background-size:cover;
-  background-position:center;
+  background:url('bg.jpg') center/cover no-repeat;
   filter:blur(25px) brightness(0.4);
   transform:scale(1.2);
   z-index:-1;
-  transition:0.5s;
 }
 
 /* PAGE */
@@ -39,7 +33,7 @@ body{
 
 /* MENU */
 .menu{
-  padding-top:100px;
+  padding-top:80px;
   text-align:center;
 }
 
@@ -61,29 +55,32 @@ body{
 
 /* PLAYER */
 .player{
-  padding-top:70px;
+  padding-top:60px;
   text-align:center;
 }
 
 .cover{
   width:140px;
   border-radius:20px;
-  animation:zoom 6s infinite;
 }
 
-@keyframes zoom{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.05)}
-  100%{transform:scale(1)}
-}
-
+/* TEXT */
 .title{font-size:20px;margin-top:10px}
-.artist{opacity:0.6;margin-bottom:20px}
+.artist{opacity:0.6;margin-bottom:10px}
 
-/* CONTROL */
+/* LIRIK */
+.lyric{
+  margin-top:20px;
+  width:80%;
+  text-align:center;
+  opacity:0.7;
+  font-size:14px;
+}
+
+/* CONTROL FIX (NAIKIN) */
 .controls{
   position:absolute;
-  bottom:110px;
+  bottom:160px; /* ini dinaikin */
   width:80%;
   left:50%;
   transform:translateX(-50%);
@@ -130,18 +127,12 @@ button{
 
   <div class="song" onclick="playSong('lagu.mp3','Sayang','Shae','cover.png')">
     <img src="cover.png">
-    <div>
-      <div>Sayang</div>
-      <small>Shae</small>
-    </div>
+    <div>Sayang<br><small>Shae</small></div>
   </div>
 
   <div class="song" onclick="playSong('hujan.mp3','Sedia Aku Sebelum Hujan','Ebiet G. Ade','hujanpict.png')">
     <img src="hujanpict.png">
-    <div>
-      <div>Sedia Aku Sebelum Hujan</div>
-      <small>Ebiet G. Ade</small>
-    </div>
+    <div>Sedia Aku Sebelum Hujan<br><small>Ebiet G. Ade</small></div>
   </div>
 </div>
 
@@ -152,6 +143,9 @@ button{
   <img id="cover" class="cover">
   <div id="title" class="title"></div>
   <div id="artist" class="artist"></div>
+
+  <!-- LIRIK SIMPLE -->
+  <div id="lyric" class="lyric">...</div>
 
   <div class="controls">
     <button id="btn" onclick="togglePlay()">▶</button>
@@ -165,30 +159,26 @@ button{
 const audio = document.getElementById("audio")
 const btn = document.getElementById("btn")
 const progress = document.getElementById("progress")
-const bg = document.getElementById("bg")
 
 function playSong(src,title,artist,cover){
-  document.getElementById("menu").classList.add("hidden")
-  document.getElementById("player").classList.remove("hidden")
+  menu.classList.add("hidden")
+  player.classList.remove("hidden")
 
   audio.src = src
   audio.play()
 
-  document.getElementById("title").innerText = title
-  document.getElementById("artist").innerText = artist
-  document.getElementById("cover").src = cover
+  titleEl.innerText = title
+  artistEl.innerText = artist
+  coverEl.src = cover
 
-  bg.style.backgroundImage = `url('${cover}')`
+  // lirik dummy dulu
+  lyric.innerText = "lagi diputer..."
 
   btn.innerText = "⏸"
 }
 
 function togglePlay(){
-  if(audio.paused){
-    audio.play()
-  }else{
-    audio.pause()
-  }
+  audio.paused ? audio.play() : audio.pause()
 }
 
 audio.onplay=()=>btn.innerText="⏸"
@@ -208,9 +198,17 @@ progress.oninput=()=>{
 
 function backMenu(){
   audio.pause()
-  document.getElementById("player").classList.add("hidden")
-  document.getElementById("menu").classList.remove("hidden")
+  player.classList.add("hidden")
+  menu.classList.remove("hidden")
 }
+
+/* shortcut */
+const menu=document.getElementById("menu")
+const player=document.getElementById("player")
+const titleEl=document.getElementById("title")
+const artistEl=document.getElementById("artist")
+const coverEl=document.getElementById("cover")
+const lyric=document.getElementById("lyric")
 </script>
 
 </body>
