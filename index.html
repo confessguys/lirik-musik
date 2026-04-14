@@ -6,12 +6,9 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 
-body{
-  color:white;
-  overflow:hidden;
-}
+body{color:white;overflow:hidden}
 
-/* BG DINAMIS */
+/* BG */
 #bg{
   position:fixed;
   inset:0;
@@ -22,6 +19,7 @@ body{
   transition:0.5s;
 }
 
+/* PAGE */
 .page{
   position:absolute;
   inset:0;
@@ -32,10 +30,7 @@ body{
 .hidden{display:none}
 
 /* MENU */
-.menu{
-  padding-top:80px;
-  text-align:center;
-}
+.menu{padding-top:80px;text-align:center}
 
 .song{
   width:85%;
@@ -48,49 +43,49 @@ body{
   margin:10px auto;
 }
 
-.song img{
-  width:55px;
-  border-radius:10px;
-}
+.song img{width:55px;border-radius:10px}
 
 /* PLAYER */
-.player{
-  padding-top:60px;
-  text-align:center;
-}
+.player{padding-top:60px;text-align:center}
 
 .cover{
   width:140px;
   border-radius:20px;
+  margin-bottom:10px;
 }
 
-/* TEXT */
-.title{font-size:20px;margin-top:10px}
+.title{font-size:20px}
 .artist{opacity:0.6;margin-bottom:10px}
 
-/* LIRIK */
-.lyric{
-  margin-top:20px;
-  width:85%;
+/* LYRICS (CENTER FIX) */
+.lyrics{
+  position:absolute;
+  top:45%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:90%;
   text-align:center;
-  font-size:14px;
-  line-height:22px;
 }
 
-.line{
+.lyrics p{
+  margin:6px 0;
   opacity:0.4;
+  font-size:14px;
+  transform:scale(0.9);
   transition:0.3s;
 }
 
-.active{
+.lyrics p.active{
   opacity:1;
-  font-size:16px;
+  font-size:18px;
+  font-weight:bold;
+  transform:scale(1.1);
 }
 
-/* CONTROL */
+/* CONTROL (NAIK) */
 .controls{
   position:absolute;
-  bottom:160px;
+  bottom:120px;
   width:80%;
   left:50%;
   transform:translateX(-50%);
@@ -99,9 +94,7 @@ body{
   align-items:center;
 }
 
-#progress{
-  width:100%;
-}
+#progress{width:100%}
 
 button{
   width:60px;
@@ -112,6 +105,7 @@ button{
   margin-bottom:10px;
 }
 
+/* BACK */
 .back{
   position:absolute;
   top:20px;
@@ -153,7 +147,7 @@ button{
   <div id="title" class="title"></div>
   <div id="artist" class="artist"></div>
 
-  <div id="lyrics" class="lyric"></div>
+  <div id="lyrics" class="lyrics"></div>
 
   <div class="controls">
     <button id="btn" onclick="togglePlay()">▶</button>
@@ -170,9 +164,9 @@ const progress = document.getElementById("progress")
 const bg = document.getElementById("bg")
 const lyricsDiv = document.getElementById("lyrics")
 
-let lrcData = []
+let lyricsData = []
 
-function playSong(src,title,artist,cover,lrcFile){
+function playSong(src,title,artist,cover,lrc){
   menu.classList.add("hidden")
   player.classList.remove("hidden")
 
@@ -183,34 +177,26 @@ function playSong(src,title,artist,cover,lrcFile){
   artistEl.innerText = artist
   coverEl.src = cover
 
-  // 🔥 BG IKUT COVER
+  // BG IKUT COVER
   bg.style.background = `url('${cover}') center/cover no-repeat`
 
-  loadLRC(lrcFile)
+  loadLRC(lrc)
 
   btn.innerText="⏸"
 }
 
 function loadLRC(file){
   fetch(file)
-  .then(res=>res.text())
+  .then(r=>r.text())
   .then(text=>{
-    const lines = text.split("\n")
-    lrcData=[]
-    lyricsDiv.innerHTML=""
+    lyricsData=[]
+    const lines=text.split("\n")
 
     lines.forEach(line=>{
       const match=line.match(/\[(\d+):(\d+\.\d+)\](.*)/)
       if(match){
-        const time = parseInt(match[1])*60 + parseFloat(match[2])
-        const text = match[3]
-
-        lrcData.push({time,text})
-
-        const div=document.createElement("div")
-        div.className="line"
-        div.innerText=text
-        lyricsDiv.appendChild(div)
+        const time=parseInt(match[1])*60+parseFloat(match[2])
+        lyricsData.push({time,text:match[3]})
       }
     })
   })
@@ -218,16 +204,26 @@ function loadLRC(file){
 
 audio.ontimeupdate=()=>{
   if(audio.duration){
-    progress.value = (audio.currentTime/audio.duration)*100
+    progress.value=(audio.currentTime/audio.duration)*100
   }
 
-  const lines = document.querySelectorAll(".line")
+  updateLyrics()
+}
 
-  lrcData.forEach((l,i)=>{
-    if(audio.currentTime >= l.time){
-      lines.forEach(x=>x.classList.remove("active"))
-      if(lines[i]){
-        lines[i].classList.add("active")
+function updateLyrics(){
+  const current=audio.currentTime
+
+  lyricsData.forEach((l,i)=>{
+    if(current>=l.time){
+      lyricsDiv.innerHTML=""
+
+      for(let j=i-3;j<=i+3;j++){
+        if(lyricsData[j]){
+          const p=document.createElement("p")
+          p.innerText=lyricsData[j].text
+          if(j===i) p.classList.add("active")
+          lyricsDiv.appendChild(p)
+        }
       }
     }
   })
@@ -251,7 +247,6 @@ function backMenu(){
   player.classList.add("hidden")
   menu.classList.remove("hidden")
 
-  // balik bg ke default
   bg.style.background="url('bg.jpg') center/cover no-repeat"
 }
 
