@@ -6,14 +6,14 @@
 <title>Music</title>
 
 <style>
-* {
+*{
   margin:0;
   padding:0;
   box-sizing:border-box;
   font-family:sans-serif;
 }
 
-body {
+body{
   height:100vh;
   background:url('bg.jpg') center/cover no-repeat;
   color:white;
@@ -24,107 +24,140 @@ body::before{
   content:"";
   position:absolute;
   inset:0;
-  backdrop-filter:blur(10px);
-  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(12px);
+  background:rgba(0,0,0,0.5);
 }
 
-/* page */
-.page {
+/* PAGE */
+.page{
   position:absolute;
   inset:0;
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
   transition:0.4s;
 }
 
-.hidden {
+.hidden{
   opacity:0;
   pointer-events:none;
 }
 
 /* MENU */
-.menu h1 {
-  margin-bottom:5px;
-}
-.menu p {
-  opacity:0.6;
-  margin-bottom:20px;
+.menu{
+  justify-content:flex-start;
+  padding-top:80px;
 }
 
-.song {
-  width:80%;
+.menu h1{
+  font-size:22px;
+}
+
+.menu p{
+  opacity:0.6;
+  margin-bottom:25px;
+}
+
+.song{
+  width:85%;
   background:rgba(255,255,255,0.1);
-  padding:10px;
+  padding:12px;
   border-radius:15px;
-  margin:10px;
+  margin:8px;
   display:flex;
   align-items:center;
   gap:10px;
-  cursor:pointer;
 }
 
-.song img {
+.song img{
   width:50px;
   height:50px;
   border-radius:10px;
 }
 
-.song:hover {
+.song:active{
   background:rgba(255,255,255,0.2);
 }
 
 /* PLAYER */
-.cover {
-  width:120px;
-  height:120px;
+.player{
+  justify-content:center;
+}
+
+.cover{
+  width:130px;
+  height:130px;
   border-radius:20px;
-  object-fit:cover;
   margin-bottom:10px;
   animation:zoom 6s infinite;
 }
 
 @keyframes zoom{
   0%{transform:scale(1)}
-  50%{transform:scale(1.1)}
+  50%{transform:scale(1.08)}
   100%{transform:scale(1)}
 }
 
-.title {font-size:20px;font-weight:bold;}
-.artist {opacity:0.6;margin-bottom:15px;}
+.title{
+  font-size:20px;
+  font-weight:bold;
+}
 
-.lyrics {
+.artist{
+  opacity:0.6;
+  margin-bottom:15px;
+}
+
+/* LIRIK */
+.lyrics{
   height:120px;
   overflow:hidden;
-  margin-bottom:20px;
   text-align:center;
+  margin-bottom:20px;
 }
 
-.lyrics p {
+.lyrics p{
   opacity:0.4;
   transition:0.3s;
+  font-size:14px;
 }
 
-.active {
+.active{
   opacity:1 !important;
   color:white;
   text-shadow:0 0 10px white;
+  transform:scale(1.05);
 }
 
-/* controls */
-.controls {
+/* CONTROL */
+.controls{
   width:80%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
-.back {
+#progress{
+  width:100%;
+}
+
+button{
+  background:white;
+  border:none;
+  border-radius:50%;
+  width:40px;
+  height:40px;
+  margin-bottom:10px;
+}
+
+/* BACK */
+.back{
   position:absolute;
   top:20px;
   left:20px;
   background:rgba(0,0,0,0.5);
   padding:5px 10px;
   border-radius:10px;
-  cursor:pointer;
 }
 </style>
 </head>
@@ -154,7 +187,7 @@ body::before{
 </div>
 
 <!-- PLAYER -->
-<div class="page hidden" id="player">
+<div class="page player hidden" id="player">
   <div class="back" onclick="backMenu()">←</div>
 
   <img id="cover" class="cover">
@@ -164,9 +197,11 @@ body::before{
   <div class="lyrics" id="lyrics"></div>
 
   <div class="controls">
-    <audio id="audio"></audio>
+    <button onclick="togglePlay()" id="btn">▶</button>
     <input type="range" id="progress">
   </div>
+
+  <audio id="audio"></audio>
 </div>
 
 <script>
@@ -175,23 +210,24 @@ const player = document.getElementById("player")
 const audio = document.getElementById("audio")
 const progress = document.getElementById("progress")
 const lyricsBox = document.getElementById("lyrics")
+const btn = document.getElementById("btn")
 
-let lines = []
+let lines=[]
 
-function playSong(src,lrcFile,cover,title,artist){
+function playSong(src,lrc,cover,title,artist){
   menu.classList.add("hidden")
   player.classList.remove("hidden")
 
-  audio.src = src
-  document.getElementById("cover").src = cover
-  document.getElementById("title").innerText = title
-  document.getElementById("artist").innerText = artist
+  audio.src=src
+  document.getElementById("cover").src=cover
+  document.getElementById("title").innerText=title
+  document.getElementById("artist").innerText=artist
 
-  fetch(lrcFile)
+  fetch(lrc)
   .then(res=>res.text())
   .then(text=>{
-    lines = text.split("\n").map(line=>{
-      let m = line.match(/\[(\d+):(\d+).(\d+)\](.*)/)
+    lines=text.split("\n").map(line=>{
+      let m=line.match(/\[(\d+):(\d+).(\d+)\](.*)/)
       if(!m)return null
       return {time:parseInt(m[1])*60+parseInt(m[2]),text:m[4]}
     }).filter(x=>x)
@@ -206,6 +242,17 @@ function playSong(src,lrcFile,cover,title,artist){
 
   audio.play()
 }
+
+function togglePlay(){
+  if(audio.paused){
+    audio.play()
+  }else{
+    audio.pause()
+  }
+}
+
+audio.onplay=()=>btn.innerText="⏸"
+audio.onpause=()=>btn.innerText="▶"
 
 audio.ontimeupdate=()=>{
   progress.value=(audio.currentTime/audio.duration)*100
@@ -222,7 +269,7 @@ audio.ontimeupdate=()=>{
     el.classList.add("active")
 
     lyricsBox.scrollTo({
-      top:el.offsetTop-50,
+      top:el.offsetTop-60,
       behavior:"smooth"
     })
   }
