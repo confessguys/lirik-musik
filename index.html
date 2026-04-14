@@ -6,12 +6,7 @@
 <title>Music</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 
 body{
   height:100vh;
@@ -35,28 +30,14 @@ body::before{
   display:flex;
   flex-direction:column;
   align-items:center;
-  transition:0.4s;
+  transition:0.3s;
 }
-
-.hidden{
-  opacity:0;
-  pointer-events:none;
-}
+.hidden{opacity:0;pointer-events:none}
 
 /* MENU */
-.menu{
-  justify-content:flex-start;
-  padding-top:80px;
-}
-
-.menu h1{
-  font-size:22px;
-}
-
-.menu p{
-  opacity:0.6;
-  margin-bottom:25px;
-}
+.menu{padding-top:70px}
+.menu h1{font-size:22px}
+.menu p{opacity:0.6;margin-bottom:20px}
 
 .song{
   width:85%;
@@ -68,85 +49,74 @@ body::before{
   align-items:center;
   gap:10px;
 }
-
-.song img{
-  width:50px;
-  height:50px;
-  border-radius:10px;
-}
-
-.song:active{
-  background:rgba(255,255,255,0.2);
-}
+.song img{width:50px;height:50px;border-radius:10px}
 
 /* PLAYER */
-.player{
-  justify-content:center;
-}
-
 .cover{
   width:130px;
   height:130px;
   border-radius:20px;
-  margin-bottom:10px;
+  margin-top:80px;
   animation:zoom 6s infinite;
 }
-
 @keyframes zoom{
   0%{transform:scale(1)}
   50%{transform:scale(1.08)}
   100%{transform:scale(1)}
 }
 
-.title{
-  font-size:20px;
-  font-weight:bold;
-}
-
-.artist{
-  opacity:0.6;
-  margin-bottom:15px;
-}
+.title{font-size:20px;font-weight:bold;margin-top:10px}
+.artist{opacity:0.6;margin-bottom:15px}
 
 /* LIRIK */
 .lyrics{
-  height:120px;
-  overflow:hidden;
+  position:absolute;
+  top:42%;
+  width:85%;
+  height:160px;
+  overflow-y:auto;
   text-align:center;
-  margin-bottom:20px;
+  line-height:1.8;
+
+  mask-image:linear-gradient(
+    to bottom,
+    transparent,
+    white 20%,
+    white 80%,
+    transparent
+  );
 }
+.lyrics::-webkit-scrollbar{display:none}
 
 .lyrics p{
-  opacity:0.4;
+  opacity:0.3;
+  transform:scale(0.95);
   transition:0.3s;
-  font-size:14px;
 }
-
 .active{
   opacity:1 !important;
-  color:white;
-  text-shadow:0 0 10px white;
   transform:scale(1.05);
+  font-weight:600;
+  text-shadow:0 0 6px rgba(255,255,255,0.5);
 }
 
 /* CONTROL */
 .controls{
+  position:absolute;
+  bottom:70px;
   width:80%;
   display:flex;
   flex-direction:column;
   align-items:center;
 }
-
-#progress{
-  width:100%;
-}
+#progress{width:100%}
 
 button{
   background:white;
   border:none;
   border-radius:50%;
-  width:40px;
-  height:40px;
+  width:45px;
+  height:45px;
   margin-bottom:10px;
 }
 
@@ -187,7 +157,7 @@ button{
 </div>
 
 <!-- PLAYER -->
-<div class="page player hidden" id="player">
+<div class="page hidden" id="player">
   <div class="back" onclick="backMenu()">←</div>
 
   <img id="cover" class="cover">
@@ -205,12 +175,12 @@ button{
 </div>
 
 <script>
-const menu = document.getElementById("menu")
-const player = document.getElementById("player")
-const audio = document.getElementById("audio")
-const progress = document.getElementById("progress")
-const lyricsBox = document.getElementById("lyrics")
-const btn = document.getElementById("btn")
+const menu=document.getElementById("menu")
+const player=document.getElementById("player")
+const audio=document.getElementById("audio")
+const progress=document.getElementById("progress")
+const lyricsBox=document.getElementById("lyrics")
+const btn=document.getElementById("btn")
 
 let lines=[]
 
@@ -223,10 +193,8 @@ function playSong(src,lrc,cover,title,artist){
   document.getElementById("title").innerText=title
   document.getElementById("artist").innerText=artist
 
-  fetch(lrc)
-  .then(res=>res.text())
-  .then(text=>{
-    lines=text.split("\n").map(line=>{
+  fetch(lrc).then(r=>r.text()).then(t=>{
+    lines=t.split("\n").map(line=>{
       let m=line.match(/\[(\d+):(\d+).(\d+)\](.*)/)
       if(!m)return null
       return {time:parseInt(m[1])*60+parseInt(m[2]),text:m[4]}
@@ -244,11 +212,8 @@ function playSong(src,lrc,cover,title,artist){
 }
 
 function togglePlay(){
-  if(audio.paused){
-    audio.play()
-  }else{
-    audio.pause()
-  }
+  if(audio.paused) audio.play()
+  else audio.pause()
 }
 
 audio.onplay=()=>btn.innerText="⏸"
@@ -256,20 +221,21 @@ audio.onpause=()=>btn.innerText="▶"
 
 audio.ontimeupdate=()=>{
   progress.value=(audio.currentTime/audio.duration)*100
-  let t=Math.floor(audio.currentTime)
+  let t=audio.currentTime
 
   let i=lines.findIndex((l,idx)=>
     t>=l.time && (!lines[idx+1]||t<lines[idx+1].time)
   )
 
-  document.querySelectorAll(".lyrics p").forEach(p=>p.classList.remove("active"))
+  let all=document.querySelectorAll(".lyrics p")
+  all.forEach(el=>el.classList.remove("active"))
 
   if(i>=0){
-    let el=lyricsBox.children[i]
+    let el=all[i]
     el.classList.add("active")
 
     lyricsBox.scrollTo({
-      top:el.offsetTop-60,
+      top:el.offsetTop - lyricsBox.clientHeight/2,
       behavior:"smooth"
     })
   }
