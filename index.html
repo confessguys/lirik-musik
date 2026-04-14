@@ -6,160 +6,206 @@
 <title>Music</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: sans-serif;
-  background: url('bg.jpg') center/cover no-repeat;
-  overflow: hidden;
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+
+body{
+  height:100vh;
+  color:white;
+  overflow:hidden;
 }
 
-.overlay {
-  backdrop-filter: blur(20px);
-  background: rgba(0,0,0,0.4);
-  height: 100vh;
-  width: 100%;
-  position: absolute;
+/* BG DINAMIS */
+#bg{
+  position:fixed;
+  inset:0;
+  background-size:cover;
+  background-position:center;
+  filter:blur(25px) brightness(0.4);
+  transform:scale(1.2);
+  z-index:-1;
+  transition:0.5s;
 }
 
-.container {
-  position: relative;
-  z-index: 2;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  text-align: center;
+/* PAGE */
+.page{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.hidden{display:none}
+
+/* MENU */
+.menu{
+  padding-top:80px;
 }
 
-.cover {
-  width: 120px;
-  height: 120px;
-  border-radius: 20px;
-  object-fit: cover;
-  margin-bottom: 15px;
+.song{
+  width:85%;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:rgba(255,255,255,0.1);
+  padding:12px;
+  border-radius:15px;
+  margin:10px;
 }
 
-.title {
-  font-size: 20px;
-  font-weight: bold;
+.song img{
+  width:55px;
+  border-radius:10px;
 }
 
-.artist {
-  opacity: 0.7;
-  margin-bottom: 20px;
+/* PLAYER */
+.player{
+  padding-top:70px;
 }
 
-.lyrics {
-  max-width: 80%;
-  height: 180px;
-  overflow: hidden;
-  position: relative;
+.cover{
+  width:140px;
+  border-radius:20px;
+  animation:zoom 6s infinite;
 }
 
-.line {
-  opacity: 0.4;
-  transition: 0.3s;
-  font-size: 14px;
-  margin: 6px 0;
+@keyframes zoom{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.05)}
+  100%{transform:scale(1)}
 }
 
-.active {
-  opacity: 1;
-  font-size: 16px;
-  font-weight: bold;
+.title{font-size:20px;margin-top:10px}
+.artist{opacity:0.6;margin-bottom:20px}
+
+/* CONTROL */
+.controls{
+  position:absolute;
+  bottom:90px;
+  width:80%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
-.controls {
-  position: absolute;
-  bottom: 80px; /* NAIKIN DIKIT */
-  width: 80%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+#progress{
+  width:100%;
 }
 
-button {
-  margin-bottom: 10px;
-  border: none;
-  background: white;
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
+button{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  border:none;
+  font-size:20px;
+  margin-bottom:10px;
 }
 
-input[type=range] {
-  width: 100%;
-}
-
-.footer {
-  position: absolute;
-  bottom: 20px;
-  font-size: 12px;
-  opacity: 0.6;
+/* BACK */
+.back{
+  position:absolute;
+  top:20px;
+  left:20px;
+  background:rgba(255,255,255,0.2);
+  border:none;
+  padding:5px 10px;
+  border-radius:10px;
+  color:white;
 }
 </style>
 </head>
 
 <body>
 
-<div class="overlay"></div>
+<div id="bg"></div>
 
-<div class="container">
+<!-- MENU -->
+<div id="menu" class="page menu">
+  <h2>welcome to my music</h2>
+  <p>made with h4dzx & jejey</p>
 
-<img src="cover.jpg" class="cover">
+  <div class="song" onclick="playSong('sayang.mp3','Sayang','Shae','cover.jpg')">
+    <img src="cover.jpg">
+    <div>
+      <div>Sayang</div>
+      <small>Shae</small>
+    </div>
+  </div>
 
-<div class="title">Sedia Aku Sebelum Hujan</div>
-<div class="artist">Ebiet G. Ade</div>
-
-<div class="lyrics" id="lyrics">
-  <div class="line">Tapi ku penuh saat kau teduh</div>
-  <div class="line">Sudah paham kan sejauh ini?</div>
-  <div class="line">Ku yang lama di sini</div>
-  <div class="line active">Menjagamu tak patah hati</div>
-  <div class="line">Sedia aku sebelum hujan</div>
+  <div class="song" onclick="playSong('hujan.mp3','Sedia Aku Sebelum Hujan','Ebiet G. Ade','cover2.jpg')">
+    <img src="cover2.jpg">
+    <div>
+      <div>Sedia Aku Sebelum Hujan</div>
+      <small>Ebiet G. Ade</small>
+    </div>
+  </div>
 </div>
 
-<div class="controls">
-  <button id="play">▶</button>
-  <input type="range" id="progress" value="0">
+<!-- PLAYER -->
+<div id="player" class="page player hidden">
+  <button class="back" onclick="backMenu()">←</button>
+
+  <img id="cover" class="cover">
+  <div id="title" class="title"></div>
+  <div id="artist" class="artist"></div>
+
+  <div class="controls">
+    <button id="btn" onclick="togglePlay()">▶</button>
+    <input type="range" id="progress">
+  </div>
+
+  <audio id="audio"></audio>
 </div>
-
-<div class="footer">made with h4dzx & jejey</div>
-
-</div>
-
-<audio id="audio" src="music.mp3"></audio>
 
 <script>
-const audio = document.getElementById("audio");
-const playBtn = document.getElementById("play");
-const progress = document.getElementById("progress");
-const lines = document.querySelectorAll(".line");
+const audio = document.getElementById("audio")
+const btn = document.getElementById("btn")
+const progress = document.getElementById("progress")
+const bg = document.getElementById("bg")
 
-playBtn.onclick = () => {
+function playSong(src,title,artist,cover){
+  document.getElementById("menu").classList.add("hidden")
+  document.getElementById("player").classList.remove("hidden")
+
+  audio.src = src
+  audio.play()
+
+  document.getElementById("title").innerText = title
+  document.getElementById("artist").innerText = artist
+  document.getElementById("cover").src = cover
+
+  bg.style.backgroundImage = `url('${cover}')`
+
+  btn.innerText = "⏸"
+}
+
+function togglePlay(){
   if(audio.paused){
-    audio.play();
-    playBtn.innerText = "⏸";
-  } else {
-    audio.pause();
-    playBtn.innerText = "▶";
+    audio.play()
+  }else{
+    audio.pause()
   }
-};
+}
 
-audio.ontimeupdate = () => {
-  progress.value = (audio.currentTime / audio.duration) * 100;
+audio.onplay=()=>btn.innerText="⏸"
+audio.onpause=()=>btn.innerText="▶"
 
-  // SIMPLE highlight pindah
-  let index = Math.floor(audio.currentTime / 5);
-  lines.forEach(l => l.classList.remove("active"));
-  if(lines[index]) lines[index].classList.add("active");
-};
+audio.ontimeupdate=()=>{
+  if(audio.duration){
+    progress.value = (audio.currentTime/audio.duration)*100
+  }
+}
 
-progress.oninput = () => {
-  audio.currentTime = (progress.value / 100) * audio.duration;
-};
+progress.oninput=()=>{
+  if(audio.duration){
+    audio.currentTime = (progress.value/100)*audio.duration
+  }
+}
+
+function backMenu(){
+  audio.pause()
+  document.getElementById("player").classList.add("hidden")
+  document.getElementById("menu").classList.remove("hidden")
+}
 </script>
 
 </body>
