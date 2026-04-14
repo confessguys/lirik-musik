@@ -6,88 +6,117 @@
 <title>Music</title>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+
 body{
-  margin:0;
-  font-family:sans-serif;
-  color:white;
+  height:100vh;
   overflow:hidden;
+  color:white;
 }
 
+/* BG */
 #bg{
   position:fixed;
   width:100%;
   height:100%;
-  background:url(bg.jpg) center/cover no-repeat;
+  background:url(bg.jpg) center/cover;
   filter:blur(20px) brightness(0.5);
   z-index:-1;
   transition:0.5s;
 }
 
+/* PAGE */
 .page{
+  position:absolute;
+  width:100%;
+  height:100%;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  height:100vh;
-  animation:fade 0.5s;
+  transition:0.5s;
 }
 
-.hide{display:none;}
-
-@keyframes fade{
-  from{opacity:0;transform:translateY(20px)}
-  to{opacity:1}
+.hide{
+  opacity:0;
+  pointer-events:none;
 }
 
-h1{margin-bottom:5px;}
-.sub{opacity:0.7;margin-bottom:30px;}
+/* MENU */
+.title{
+  font-size:22px;
+  margin-bottom:5px;
+}
 
-.card{
-  width:80%;
-  background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(10px);
-  padding:15px;
-  border-radius:15px;
+.subtitle{
+  font-size:12px;
+  opacity:0.6;
+  margin-bottom:20px;
+}
+
+.list{
+  width:90%;
+}
+
+.song{
   display:flex;
   align-items:center;
+  gap:10px;
+  padding:12px;
   margin:10px 0;
+  background:rgba(255,255,255,0.1);
+  border-radius:12px;
+  backdrop-filter:blur(10px);
+  cursor:pointer;
 }
 
-.card img{
+.song img{
   width:50px;
   height:50px;
   border-radius:10px;
-  margin-right:10px;
 }
 
+/* PLAYER */
 .cover{
-  width:150px;
+  width:120px;
   border-radius:20px;
   margin-bottom:10px;
 }
 
-#lyric{
+.song-title{
+  font-size:18px;
+}
+
+.artist{
+  font-size:12px;
+  opacity:0.7;
+  margin-bottom:10px;
+}
+
+/* LIRIK */
+.lyrics{
   height:200px;
   overflow:hidden;
   text-align:center;
-  margin-top:20px;
+  font-size:14px;
+  opacity:0.7;
 }
 
 .line{
-  opacity:0.3;
+  margin:5px 0;
   transition:0.3s;
-  transform:scale(0.95);
 }
 
 .active{
+  color:white;
+  font-size:16px;
   opacity:1;
-  font-size:18px;
-  transform:scale(1);
 }
 
+/* CONTROL */
 .controls{
   position:absolute;
-  bottom:120px;
+  bottom:150px;
   width:80%;
 }
 
@@ -95,26 +124,25 @@ input[type=range]{
   width:100%;
 }
 
+/* PLAY */
 .playbtn{
   position:absolute;
-  bottom:60px;
-  background:white;
-  color:black;
-  border-radius:50%;
+  bottom:80px;
   width:60px;
   height:60px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  border-radius:50%;
+  border:none;
   font-size:20px;
 }
+
+/* BACK */
 .back{
   position:absolute;
   top:20px;
   left:20px;
-  background:rgba(255,255,255,0.2);
   padding:10px;
   border-radius:10px;
+  background:rgba(255,255,255,0.2);
 }
 </style>
 </head>
@@ -125,102 +153,101 @@ input[type=range]{
 
 <!-- MENU -->
 <div id="menu" class="page">
-  <h1>welcome to my music</h1>
-  <div class="sub">made with h4dzx & jejey</div>
+  <div class="title">welcome to my music</div>
+  <div class="subtitle">made with h4dzx & jejey</div>
 
-  <div class="card" onclick="playSong(0)">
-    <img src="cover.png">
-    <div>
-      <div>Sayang</div>
-      <small>Shae</small>
+  <div class="list">
+    <div class="song" onclick="playSong(0)">
+      <img src="cover.png">
+      <div>
+        <div>Sayang</div>
+        <div style="font-size:12px;opacity:0.6;">Shae</div>
+      </div>
     </div>
-  </div>
 
-  <div class="card" onclick="playSong(1)">
-    <img src="hujanpict.png">
-    <div>
-      <div>Sedia Aku Sebelum Hujan</div>
-      <small>Ebiet G. Ade</small>
+    <div class="song" onclick="playSong(1)">
+      <img src="hujanpict.png">
+      <div>
+        <div>Sedia Aku Sebelum Hujan</div>
+        <div style="font-size:12px;opacity:0.6;">Ebiet G. Ade</div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- PLAYER -->
 <div id="player" class="page hide">
+  <div class="back" onclick="back()">←</div>
 
-<div class="back" onclick="back()">←</div>
+  <img id="cover" class="cover">
+  <div id="title" class="song-title"></div>
+  <div id="artist" class="artist"></div>
 
-<img id="cover" class="cover" src="">
+  <div id="lyrics" class="lyrics"></div>
 
-<h2 id="title"></h2>
-<div id="artist" class="sub"></div>
+  <div class="controls">
+    <input type="range" id="progress" value="0">
+  </div>
 
-<div id="lyric"></div>
-
-<div class="controls">
-  <input type="range" id="progress" value="0">
-</div>
-
-<div class="playbtn" onclick="toggle()">▶</div>
-
+  <button class="playbtn" onclick="toggle()">▶</button>
 </div>
 
 <audio id="audio"></audio>
 
 <script>
-const songs=[
-{
-  title:"Sayang",
-  artist:"Shae",
-  src:"lagu.mp3",
-  cover:"cover.png",
-  lrc:`[00:05]Sayang apa kabar denganmu
-[00:10]Di sini ku merindukan kamu
-[00:15]Kuharap cintamu takkan berubah`
-},
-{
-  title:"Sedia Aku Sebelum Hujan",
-  artist:"Ebiet G. Ade",
-  src:"hujan.mp3",
-  cover:"hujanpict.png",
-  lrc:`[00:05]Tapi ku penuh saat kau teduh
-[00:10]Sudah paham kan sejauh ini
-[00:15]Ku yang lama di sini`
-}
+let songs=[
+  {
+    title:"Sayang",
+    artist:"Shae",
+    src:"lagu.mp3",
+    cover:"cover.png",
+    lrc:"lagu.lrc"
+  },
+  {
+    title:"Sedia Aku Sebelum Hujan",
+    artist:"Ebiet G. Ade",
+    src:"hujan.mp3",
+    cover:"hujanpict.png",
+    lrc:"hujan.lrc"
+  }
 ]
 
 let audio=document.getElementById("audio")
 let progress=document.getElementById("progress")
-let lyricBox=document.getElementById("lyric")
+let lyricBox=document.getElementById("lyrics")
 
 function playSong(i){
   let s=songs[i]
 
-  audio.pause()
-  audio.currentTime=0
-  audio.src=s.src
-  audio.play()
+  document.getElementById("menu").classList.add("hide")
+  document.getElementById("player").classList.remove("hide")
 
   document.getElementById("title").innerText=s.title
   document.getElementById("artist").innerText=s.artist
   document.getElementById("cover").src=s.cover
 
-  document.getElementById("bg").style.background=`url(${s.cover}) center/cover`
+  audio.src=s.src
+  audio.play()
 
-  lyricBox.innerHTML="<div class='line active'>tunggu dulu......</div>"
+  document.getElementById("bg").style.background=
+    "url("+s.cover+") center/cover"
 
-  setTimeout(()=>{
-    loadLrc(s.lrc)
-  },1000)
+  lyricBox.innerHTML="tunggu dulu..."
 
-  document.getElementById("menu").classList.add("hide")
-  document.getElementById("player").classList.remove("hide")
+  fetch(s.lrc)
+  .then(r=>r.text())
+  .then(text=>{
+    loadLrc(text)
+  })
 }
 
 function back(){
   audio.pause()
   document.getElementById("menu").classList.remove("hide")
   document.getElementById("player").classList.add("hide")
+
+  document.getElementById("bg").style.background=
+    "url(bg.jpg) center/cover"
 }
 
 function toggle(){
@@ -231,24 +258,32 @@ function toggle(){
   }
 }
 
+progress.oninput=()=>{
+  audio.currentTime=(progress.value/100)*audio.duration
+}
+
 audio.ontimeupdate=()=>{
   if(!audio.duration) return
 
   progress.value=(audio.currentTime/audio.duration)*100
 
   let lines=document.querySelectorAll(".line")
-  lines.forEach(l=>l.classList.remove("active"))
+  let currentTime=audio.currentTime
 
-  let current=Math.floor(audio.currentTime)
-  let el=document.getElementById("l"+current)
-  if(el){
-    el.classList.add("active")
-    el.scrollIntoView({behavior:"smooth",block:"center"})
+  let activeLine=null
+
+  lines.forEach(line=>{
+    let time=parseFloat(line.dataset.time)
+    if(currentTime>=time){
+      activeLine=line
+    }
+  })
+
+  if(activeLine){
+    lines.forEach(l=>l.classList.remove("active"))
+    activeLine.classList.add("active")
+    activeLine.scrollIntoView({behavior:"smooth",block:"center"})
   }
-}
-
-progress.oninput=()=>{
-  audio.currentTime=(progress.value/100)*audio.duration
 }
 
 function loadLrc(lrc){
@@ -258,12 +293,14 @@ function loadLrc(lrc){
   lines.forEach(line=>{
     let match=line.match(/\[(\d+):(\d+)\](.*)/)
     if(match){
-      let sec=parseInt(match[1])*60+parseInt(match[2])
+      let min=parseInt(match[1])
+      let sec=parseInt(match[2])
+      let time=min*60+sec
       let text=match[3]
 
       let div=document.createElement("div")
       div.className="line"
-      div.id="l"+sec
+      div.dataset.time=time
       div.innerText=text
 
       lyricBox.appendChild(div)
