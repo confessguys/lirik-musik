@@ -15,23 +15,35 @@
 body{
   font-family:sans-serif;
   overflow:hidden;
-  background:#000; /* fallback biar ga abu */
+  background:#000;
 }
 
-/* ===== BACKGROUND FIX ===== */
+/* BACKGROUND */
 .bg{
   position:fixed;
   inset:0;
   background:url('bg.jpg') center/cover no-repeat;
   filter:brightness(0.4);
   z-index:-1;
+  animation:fadeBg 1s ease;
 }
 
-/* ===== LIST ===== */
+@keyframes fadeBg{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+/* LIST */
 .list{
   height:100vh;
   padding:20px;
   color:#fff;
+  animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(10px)}
+  to{opacity:1; transform:translateY(0)}
 }
 
 .header{
@@ -45,8 +57,14 @@ body{
   justify-content:space-between;
   background:rgba(0,0,0,0.6);
   padding:10px;
-  border-radius:12px;
+  border-radius:14px;
   margin-top:10px;
+  backdrop-filter:blur(6px);
+  transition:0.3s;
+}
+
+.song:active{
+  transform:scale(0.97);
 }
 
 .song img{
@@ -68,7 +86,7 @@ body{
   color:#fff;
 }
 
-/* ===== PLAYER ===== */
+/* PLAYER */
 .player{
   position:absolute;
   inset:0;
@@ -82,6 +100,7 @@ body{
 
 .player.active{
   display:flex;
+  animation:fadeIn 0.5s ease;
 }
 
 /* COVER */
@@ -89,13 +108,12 @@ body{
   width:130px;
   height:130px;
   border-radius:20px;
-  transition:0.5s;
-  opacity:0.8;
+  transition:0.4s;
 }
 
 .playing .cover{
   transform:scale(1.1);
-  opacity:1;
+  box-shadow:0 10px 30px rgba(0,0,0,0.6);
 }
 
 /* TITLE */
@@ -110,16 +128,23 @@ body{
   height:120px;
   overflow:hidden;
   font-size:14px;
-  opacity:0.7;
+  opacity:0.6;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
 }
 
 .lyrics div{
   transition:0.3s;
+  line-height:22px;
 }
 
 .active{
   color:#fff;
   font-size:16px;
+  opacity:1;
+  transform:scale(1.1);
 }
 
 /* CONTROL */
@@ -140,10 +165,16 @@ input[type=range]{
   margin-top:15px;
 }
 
+/* BACK BTN */
 .back{
   position:absolute;
   top:20px;
   left:20px;
+  background:rgba(0,0,0,0.5);
+  border:none;
+  color:#fff;
+  padding:8px;
+  border-radius:8px;
 }
 </style>
 </head>
@@ -159,22 +190,22 @@ input[type=range]{
     <p>clone h4dxz</p>
   </div>
 
-  <div class="song">
+  <div class="song" onclick="play(0)">
     <img src="cover.png">
     <div class="info">
       <b>Sayang</b><br>
       <small>Shae</small>
     </div>
-    <button onclick="play(0)">▶</button>
+    <button>▶</button>
   </div>
 
-  <div class="song">
+  <div class="song" onclick="play(1)">
     <img src="hujanpict.png">
     <div class="info">
       <b>Sedia Aku Sebelum Hujan</b><br>
       <small>Ebiet G. Ade</small>
     </div>
-    <button onclick="play(1)">▶</button>
+    <button>▶</button>
   </div>
 </div>
 
@@ -251,9 +282,9 @@ function back(){
   list.style.display="block"
 }
 
-/* progress */
+/* PROGRESS */
 audio.ontimeupdate=()=>{
-  progress.value=(audio.currentTime/audio.duration)*100
+  progress.value=(audio.currentTime/audio.duration)*100 || 0
   updateLRC()
 }
 
@@ -261,7 +292,7 @@ progress.oninput=()=>{
   audio.currentTime=(progress.value/100)*audio.duration
 }
 
-/* parse LRC */
+/* PARSE LRC */
 function parse(text){
   return text.split("\n").map(line=>{
     let m=line.match(/\[(\d+):(\d+)\.\d+\](.*)/)
@@ -273,20 +304,29 @@ function parse(text){
   }).filter(Boolean)
 }
 
-/* update lirik */
+/* UPDATE LIRIK */
 function updateLRC(){
   let t=audio.currentTime
-  let html=""
+  let current=0
 
   lrc.forEach((l,i)=>{
-    let active = t>=l.time && (!lrc[i+1] || t<lrc[i+1].time)
-    html+=`<div class="${active?'active':''}">${l.text}</div>`
+    if(t>=l.time) current=i
   })
+
+  let html=""
+
+  for(let i=current-2;i<=current+2;i++){
+    if(lrc[i]){
+      html+=`<div class="${i===current?'active':''}">
+      ${lrc[i].text}
+      </div>`
+    }
+  }
 
   lyricsBox.innerHTML=html
 }
 
-/* efek play */
+/* ANIMASI PLAY */
 audio.onplay=()=>player.classList.add("playing")
 audio.onpause=()=>player.classList.remove("playing")
 </script>
