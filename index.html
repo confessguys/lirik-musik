@@ -7,174 +7,235 @@
 
 <style>
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: sans-serif;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:sans-serif;
 }
 
 body {
-  height: 100vh;
-  background: url('bg.jpg') center/cover no-repeat;
-  overflow: hidden;
+  height:100vh;
+  background:url('bg.jpg') center/cover no-repeat;
+  color:white;
+  overflow:hidden;
 }
 
-/* overlay blur */
-body::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  backdrop-filter: blur(10px);
-  background: rgba(0,0,0,0.4);
+body::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  backdrop-filter:blur(10px);
+  background:rgba(0,0,0,0.4);
 }
 
-/* container */
-.player {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  text-align: center;
+/* page */
+.page {
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  transition:0.4s;
 }
 
-/* cover */
+.hidden {
+  opacity:0;
+  pointer-events:none;
+}
+
+/* MENU */
+.menu h1 {
+  margin-bottom:5px;
+}
+.menu p {
+  opacity:0.6;
+  margin-bottom:20px;
+}
+
+.song {
+  width:80%;
+  background:rgba(255,255,255,0.1);
+  padding:10px;
+  border-radius:15px;
+  margin:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+}
+
+.song img {
+  width:50px;
+  height:50px;
+  border-radius:10px;
+}
+
+.song:hover {
+  background:rgba(255,255,255,0.2);
+}
+
+/* PLAYER */
 .cover {
-  width: 120px;
-  height: 120px;
-  border-radius: 20px;
-  object-fit: cover;
-  margin-bottom: 15px;
-  animation: zoom 6s ease-in-out infinite;
+  width:120px;
+  height:120px;
+  border-radius:20px;
+  object-fit:cover;
+  margin-bottom:10px;
+  animation:zoom 6s infinite;
 }
 
-@keyframes zoom {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.08); }
-  100% { transform: scale(1); }
+@keyframes zoom{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.1)}
+  100%{transform:scale(1)}
 }
 
-/* title */
-.title {
-  font-size: 20px;
-  font-weight: bold;
-}
+.title {font-size:20px;font-weight:bold;}
+.artist {opacity:0.6;margin-bottom:15px;}
 
-.artist {
-  opacity: 0.7;
-  margin-bottom: 20px;
-}
-
-/* lyrics */
 .lyrics {
-  height: 120px;
-  overflow: hidden;
-  margin-bottom: 20px;
+  height:120px;
+  overflow:hidden;
+  margin-bottom:20px;
+  text-align:center;
 }
 
 .lyrics p {
-  opacity: 0.4;
-  transition: 0.3s;
+  opacity:0.4;
+  transition:0.3s;
 }
 
-.lyrics .active {
-  opacity: 1;
-  color: white;
-  font-size: 18px;
-  text-shadow: 0 0 10px white;
+.active {
+  opacity:1 !important;
+  color:white;
+  text-shadow:0 0 10px white;
 }
 
 /* controls */
 .controls {
-  width: 80%;
+  width:80%;
 }
 
-input[type="range"] {
-  width: 100%;
+.back {
+  position:absolute;
+  top:20px;
+  left:20px;
+  background:rgba(0,0,0,0.5);
+  padding:5px 10px;
+  border-radius:10px;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="player">
-  <img src="cover.png" class="cover">
+<!-- MENU -->
+<div class="page menu" id="menu">
+  <h1>welcome to my music</h1>
+  <p>clone h4dxz</p>
 
-  <div class="title">Sayang</div>
-  <div class="artist">Shae</div>
+  <div class="song" onclick="playSong('lagu.mp3','lagu.lrc','cover.png','Sayang','Shae')">
+    <img src="cover.png">
+    <div>
+      <div>Sayang</div>
+      <small>Shae</small>
+    </div>
+  </div>
+
+  <div class="song" onclick="playSong('hujan.mp3','hujan.lrc','hujanpict.png','Sedia Aku Sebelum Hujan','Ebiet G. Ade')">
+    <img src="hujanpict.png">
+    <div>
+      <div>Sedia Aku Sebelum Hujan</div>
+      <small>Ebiet G. Ade</small>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER -->
+<div class="page hidden" id="player">
+  <div class="back" onclick="backMenu()">←</div>
+
+  <img id="cover" class="cover">
+  <div id="title" class="title"></div>
+  <div id="artist" class="artist"></div>
 
   <div class="lyrics" id="lyrics"></div>
 
   <div class="controls">
-    <audio id="audio" src="lagu.mp3"></audio>
-    <input type="range" id="progress" value="0">
+    <audio id="audio"></audio>
+    <input type="range" id="progress">
   </div>
 </div>
 
 <script>
+const menu = document.getElementById("menu")
+const player = document.getElementById("player")
 const audio = document.getElementById("audio")
 const progress = document.getElementById("progress")
 const lyricsBox = document.getElementById("lyrics")
 
-// LRC SAMPLE (lu ganti isi dari file lu juga bisa)
-const lrc = `
-[00:01.00]Hu-uh-oh
-[00:03.00]He-he-yeah
-[00:05.00]Sayang, apa kabar denganmu?
-[00:08.00]Di sini ku merindukan kamu
-[00:12.00]Ku harap cintamu takkan berubah
-[00:15.00]Kar'na di sini ku tetap untukmu
-`
+let lines = []
 
-// parse lrc
-let lines = lrc.split("\n").map(line => {
-  let match = line.match(/\[(\d+):(\d+).(\d+)\](.*)/)
-  if (!match) return null
-  return {
-    time: parseInt(match[1]) * 60 + parseInt(match[2]),
-    text: match[4]
-  }
-}).filter(x => x)
+function playSong(src,lrcFile,cover,title,artist){
+  menu.classList.add("hidden")
+  player.classList.remove("hidden")
 
-// render
-lines.forEach(l => {
-  let p = document.createElement("p")
-  p.innerText = l.text
-  lyricsBox.appendChild(p)
-})
+  audio.src = src
+  document.getElementById("cover").src = cover
+  document.getElementById("title").innerText = title
+  document.getElementById("artist").innerText = artist
 
-// play
-audio.play()
+  fetch(lrcFile)
+  .then(res=>res.text())
+  .then(text=>{
+    lines = text.split("\n").map(line=>{
+      let m = line.match(/\[(\d+):(\d+).(\d+)\](.*)/)
+      if(!m)return null
+      return {time:parseInt(m[1])*60+parseInt(m[2]),text:m[4]}
+    }).filter(x=>x)
 
-// progress
-audio.ontimeupdate = () => {
-  progress.value = (audio.currentTime / audio.duration) * 100
-
-  let current = Math.floor(audio.currentTime)
-
-  let index = lines.findIndex((l, i) => {
-    return current >= l.time && (!lines[i+1] || current < lines[i+1].time)
+    lyricsBox.innerHTML=""
+    lines.forEach(l=>{
+      let p=document.createElement("p")
+      p.innerText=l.text
+      lyricsBox.appendChild(p)
+    })
   })
 
-  document.querySelectorAll(".lyrics p").forEach(p => p.classList.remove("active"))
+  audio.play()
+}
 
-  if (index >= 0) {
-    let active = lyricsBox.children[index]
-    active.classList.add("active")
+audio.ontimeupdate=()=>{
+  progress.value=(audio.currentTime/audio.duration)*100
+  let t=Math.floor(audio.currentTime)
+
+  let i=lines.findIndex((l,idx)=>
+    t>=l.time && (!lines[idx+1]||t<lines[idx+1].time)
+  )
+
+  document.querySelectorAll(".lyrics p").forEach(p=>p.classList.remove("active"))
+
+  if(i>=0){
+    let el=lyricsBox.children[i]
+    el.classList.add("active")
 
     lyricsBox.scrollTo({
-      top: active.offsetTop - 50,
-      behavior: "smooth"
+      top:el.offsetTop-50,
+      behavior:"smooth"
     })
   }
 }
 
-// seek
-progress.oninput = () => {
-  audio.currentTime = (progress.value / 100) * audio.duration
+progress.oninput=()=>{
+  audio.currentTime=(progress.value/100)*audio.duration
+}
+
+function backMenu(){
+  audio.pause()
+  player.classList.add("hidden")
+  menu.classList.remove("hidden")
 }
 </script>
 
