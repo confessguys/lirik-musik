@@ -6,160 +6,92 @@
 <title>Music</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
 }
 
-body{
-  font-family:sans-serif;
-  overflow:hidden;
-  background:#000;
+body {
+  height: 100vh;
+  overflow: hidden;
+  color: white;
 }
 
-/* BACKGROUND */
-.bg{
-  position:fixed;
-  inset:0;
-  background:url('bg.jpg') center/cover no-repeat;
-  filter:brightness(0.4);
-  z-index:-1;
+/* BACKGROUND BLUR */
+.bg {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: url('hadzx.jpg') center/cover no-repeat;
+  filter: blur(12px) brightness(0.4);
+  z-index: -1;
 }
 
-/* LIST */
-.list{
-  height:100vh;
-  padding:20px;
-  color:#fff;
-}
-
-.header{
-  text-align:center;
-  margin-bottom:20px;
-}
-
-.song{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:rgba(0,0,0,0.6);
-  padding:12px;
-  border-radius:14px;
-  margin-top:10px;
-  backdrop-filter:blur(6px);
-}
-
-.song img{
-  width:50px;
-  height:50px;
-  border-radius:10px;
-}
-
-.info{
-  flex:1;
-  margin-left:10px;
-}
-
-.song button{
-  background:#ff9900;
-  border:none;
-  padding:8px;
-  border-radius:8px;
-  color:#fff;
-}
-
-/* PLAYER */
-.player{
-  position:absolute;
-  inset:0;
-  display:none;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  color:#fff;
-  text-align:center;
-}
-
-.player.active{
-  display:flex;
+/* CONTAINER */
+.container {
+  text-align: center;
+  padding-top: 60px;
 }
 
 /* COVER */
-.cover{
-  width:130px;
-  height:130px;
-  border-radius:20px;
-  transition:0.4s;
+.cover {
+  width: 130px;
+  height: 130px;
+  border-radius: 20px;
+  object-fit: cover;
+  margin-bottom: 15px;
+  animation: zoom 4s infinite alternate;
 }
 
-.playing .cover{
-  transform:scale(1.1);
-  box-shadow:0 10px 30px rgba(0,0,0,0.6);
+@keyframes zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
 }
 
-/* TITLE */
-.title{
-  margin-top:15px;
-  font-size:18px;
+/* TEXT */
+.title {
+  font-size: 20px;
+  font-weight: bold;
 }
 
-/* LIRIK */
-.lyrics{
-  margin-top:20px;
-  height:150px;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
+.artist {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 20px;
 }
 
-.lyrics div{
-  opacity:0.4;
-  transition:0.3s;
-  line-height:24px;
-  text-align:center;
-  max-width:80%;
+/* LYRICS */
+.lyrics {
+  height: 180px;
+  overflow: hidden;
+  margin: 20px;
+  line-height: 1.8;
 }
 
-/* ACTIVE (GLOW DIKIT) */
-.lyrics .active{
-  color:#fff;
-  opacity:1;
-  font-size:17px;
-  font-weight:600;
-  text-shadow:0 0 6px rgba(255,255,255,0.5); /* glow tipis */
+.lyrics p {
+  opacity: 0.4;
+  transition: all 0.3s ease;
+  transform: translateY(10px);
 }
 
-/* CONTROL */
-.controls{
-  margin-top:20px;
+/* ACTIVE LIRIK */
+.lyrics .active {
+  opacity: 1;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(255,255,255,0.6);
+  transform: translateY(0);
 }
 
-.controls button{
-  background:#fff;
-  border:none;
-  padding:10px;
-  border-radius:50%;
+/* PLAYER */
+.controls {
+  margin-top: 20px;
 }
 
-/* PROGRESS */
-input[type=range]{
-  width:80%;
-  margin-top:15px;
-}
-
-/* BACK */
-.back{
-  position:absolute;
-  top:20px;
-  left:20px;
-  background:rgba(0,0,0,0.5);
-  border:none;
-  color:#fff;
-  padding:8px;
-  border-radius:8px;
+input[type=range] {
+  width: 80%;
 }
 </style>
 </head>
@@ -168,152 +100,88 @@ input[type=range]{
 
 <div class="bg"></div>
 
-<!-- LIST -->
-<div class="list" id="list">
-  <div class="header">
-    <h2>welcome to my music</h2>
-    <p>clone h4dxz</p>
-  </div>
+<div class="container">
 
-  <div class="song" onclick="play(0)">
-    <img src="cover.png">
-    <div class="info">
-      <b>Sayang</b><br>
-      <small>Shae</small>
-    </div>
-    <button>▶</button>
-  </div>
+<img id="cover" src="cover.png" class="cover">
 
-  <div class="song" onclick="play(1)">
-    <img src="hujanpict.png">
-    <div class="info">
-      <b>Sedia Aku Sebelum Hujan</b><br>
-      <small>Ebiet G. Ade</small>
-    </div>
-    <button>▶</button>
-  </div>
+<div class="title" id="title">Judul Lagu</div>
+<div class="artist" id="artist">Artist</div>
+
+<div class="lyrics" id="lyrics"></div>
+
+<div class="controls">
+  <audio id="audio" src="lagu.mp3"></audio>
+  <button onclick="playPause()">⏯</button><br><br>
+  <input type="range" id="seek" value="0">
 </div>
 
-<!-- PLAYER -->
-<div class="player" id="player">
-  <button class="back" onclick="back()">⬅</button>
-
-  <img class="cover" id="cover">
-  <div class="title" id="title"></div>
-
-  <div class="lyrics" id="lyrics"></div>
-
-  <div class="controls">
-    <button onclick="toggle()">⏯</button>
-  </div>
-
-  <input type="range" id="progress">
 </div>
-
-<audio id="audio"></audio>
 
 <script>
-const songs=[
-{
-  title:"Sayang",
-  file:"lagu.mp3",
-  cover:"cover.png",
-  lrc:"lagu.lrc"
-},
-{
-  title:"Sedia Aku Sebelum Hujan",
-  file:"hujan.mp3",
-  cover:"hujanpict.png",
-  lrc:"hujan.lrc"
-}
-]
+const audio = document.getElementById("audio");
+const lyricsBox = document.getElementById("lyrics");
+const seek = document.getElementById("seek");
 
-let audio=document.getElementById("audio")
-let cover=document.getElementById("cover")
-let title=document.getElementById("title")
-let progress=document.getElementById("progress")
-let lyricsBox=document.getElementById("lyrics")
-let player=document.getElementById("player")
-let list=document.getElementById("list")
+let lirik = [];
 
-let lrc=[]
+/* LOAD LRC */
+fetch("lagu.lrc")
+.then(res => res.text())
+.then(text => {
+  let lines = text.split("\n");
 
-function play(i){
-  let s=songs[i]
-
-  audio.src=s.file
-  cover.src=s.cover
-  title.innerText=s.title
-
-  fetch(s.lrc)
-  .then(r=>r.text())
-  .then(text=>{
-    lrc=parse(text)
-  })
-
-  list.style.display="none"
-  player.classList.add("active")
-
-  audio.play()
-}
-
-function toggle(){
-  audio.paused ? audio.play() : audio.pause()
-}
-
-function back(){
-  audio.pause()
-  player.classList.remove("active")
-  list.style.display="block"
-}
-
-/* PROGRESS */
-audio.ontimeupdate=()=>{
-  progress.value=(audio.currentTime/audio.duration)*100 || 0
-  updateLRC()
-}
-
-progress.oninput=()=>{
-  audio.currentTime=(progress.value/100)*audio.duration
-}
-
-/* PARSE */
-function parse(text){
-  return text.split("\n").map(line=>{
-    let m=line.match(/\[(\d+):(\d+)\.\d+\](.*)/)
-    if(!m)return
-    return {
-      time:parseInt(m[1])*60+parseInt(m[2]),
-      text:m[3]
+  lines.forEach(line => {
+    let match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+    if(match){
+      let time = parseInt(match[1]) * 60 + parseFloat(match[2]);
+      let text = match[3];
+      lirik.push({time, text});
     }
-  }).filter(Boolean)
+  });
+
+  renderLyrics();
+});
+
+function renderLyrics(){
+  lyricsBox.innerHTML = "";
+  lirik.forEach(l => {
+    let p = document.createElement("p");
+    p.innerText = l.text;
+    lyricsBox.appendChild(p);
+  });
 }
 
-/* LIRIK */
-function updateLRC(){
-  let t=audio.currentTime
-  let current=0
+/* SYNC */
+audio.ontimeupdate = () => {
+  let current = audio.currentTime;
+  let items = lyricsBox.querySelectorAll("p");
 
-  lrc.forEach((l,i)=>{
-    if(t>=l.time) current=i
-  })
+  lirik.forEach((l, i) => {
+    if(current >= l.time){
+      items.forEach(el => el.classList.remove("active"));
+      items[i].classList.add("active");
 
-  let html=""
-
-  for(let i=current-2;i<=current+2;i++){
-    if(lrc[i]){
-      html+=`<div class="${i===current?'active':''}">
-        ${lrc[i].text}
-      </div>`
+      // scroll smooth
+      lyricsBox.scrollTo({
+        top: items[i].offsetTop - 80,
+        behavior: "smooth"
+      });
     }
-  }
+  });
 
-  lyricsBox.innerHTML=html
+  seek.value = (audio.currentTime / audio.duration) * 100;
+};
+
+/* SEEK */
+seek.oninput = () => {
+  audio.currentTime = (seek.value / 100) * audio.duration;
+};
+
+/* PLAY */
+function playPause(){
+  if(audio.paused) audio.play();
+  else audio.pause();
 }
-
-/* ANIMASI */
-audio.onplay=()=>player.classList.add("playing")
-audio.onpause=()=>player.classList.remove("playing")
 </script>
 
 </body>
