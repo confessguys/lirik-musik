@@ -8,11 +8,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 
-body{
-  height:100vh;
-  overflow:hidden;
-  color:white;
-}
+body{overflow:hidden;color:white}
 
 /* BG */
 #bg{
@@ -20,7 +16,7 @@ body{
   width:100%;
   height:100%;
   background:url(bg.jpg) center/cover;
-  filter:blur(20px) brightness(0.5);
+  filter:blur(25px) brightness(0.4);
   z-index:-1;
   transition:0.5s;
 }
@@ -43,36 +39,23 @@ body{
 }
 
 /* MENU */
-.title{
-  font-size:22px;
-  margin-bottom:5px;
-}
-
-.subtitle{
-  font-size:12px;
-  opacity:0.6;
-  margin-bottom:20px;
-}
-
-.list{
-  width:90%;
-}
+.title{font-size:22px}
+.subtitle{font-size:12px;opacity:0.6;margin-bottom:20px}
 
 .song{
   display:flex;
   align-items:center;
   gap:10px;
   padding:12px;
-  margin:10px 0;
+  margin:10px;
+  width:90%;
   background:rgba(255,255,255,0.1);
   border-radius:12px;
   backdrop-filter:blur(10px);
-  cursor:pointer;
 }
 
 .song img{
   width:50px;
-  height:50px;
   border-radius:10px;
 }
 
@@ -83,57 +66,54 @@ body{
   margin-bottom:10px;
 }
 
-.song-title{
-  font-size:18px;
-}
-
-.artist{
-  font-size:12px;
-  opacity:0.7;
-  margin-bottom:10px;
-}
+.song-title{font-size:18px}
+.artist{font-size:12px;opacity:0.7;margin-bottom:10px}
 
 /* LIRIK */
 .lyrics{
-  height:200px;
+  height:220px;
   overflow:hidden;
   text-align:center;
   font-size:14px;
-  opacity:0.7;
 }
 
 .line{
-  margin:5px 0;
-  transition:0.3s;
+  margin:6px 0;
+  opacity:0.4;
+  transform:scale(0.95);
+  transition:0.4s;
 }
 
 .active{
   color:white;
-  font-size:16px;
+  font-size:17px;
   opacity:1;
+  transform:scale(1.1);
+  text-shadow:0 0 12px rgba(255,255,255,0.8);
 }
 
-/* CONTROL */
+/* BAR */
 .controls{
   position:absolute;
-  bottom:150px;
+  bottom:180px;
   width:80%;
 }
 
-input[type=range]{
-  width:100%;
-}
+input[type=range]{width:100%}
 
 /* PLAY */
 .playbtn{
   position:absolute;
-  bottom:80px;
-  width:60px;
-  height:60px;
+  bottom:100px;
+  width:65px;
+  height:65px;
   border-radius:50%;
   border:none;
-  font-size:20px;
+  font-size:22px;
+  transition:0.3s;
 }
+
+.playbtn:active{transform:scale(0.9)}
 
 /* BACK */
 .back{
@@ -156,21 +136,19 @@ input[type=range]{
   <div class="title">welcome to my music</div>
   <div class="subtitle">made with h4dzx & jejey</div>
 
-  <div class="list">
-    <div class="song" onclick="playSong(0)">
-      <img src="cover.png">
-      <div>
-        <div>Sayang</div>
-        <div style="font-size:12px;opacity:0.6;">Shae</div>
-      </div>
+  <div class="song" onclick="playSong(0)">
+    <img src="cover.png">
+    <div>
+      <div>Sayang</div>
+      <div style="font-size:12px;opacity:0.6;">Shae</div>
     </div>
+  </div>
 
-    <div class="song" onclick="playSong(1)">
-      <img src="hujanpict.png">
-      <div>
-        <div>Sedia Aku Sebelum Hujan</div>
-        <div style="font-size:12px;opacity:0.6;">Ebiet G. Ade</div>
-      </div>
+  <div class="song" onclick="playSong(1)">
+    <img src="hujanpict.png">
+    <div>
+      <div>Sedia Aku Sebelum Hujan</div>
+      <div style="font-size:12px;opacity:0.6;">Ebiet G. Ade</div>
     </div>
   </div>
 </div>
@@ -227,34 +205,45 @@ function playSong(i){
   document.getElementById("cover").src=s.cover
 
   audio.src=s.src
+  audio.currentTime=0
+
+  document.querySelector(".playbtn").innerText="⏸"
+
   audio.play()
 
-  document.getElementById("bg").style.background=
-    "url("+s.cover+") center/cover"
+  let bg=document.getElementById("bg")
+  bg.style.transform="scale(1.1)"
+  bg.style.background="url("+s.cover+") center/cover"
 
-  lyricBox.innerHTML="tunggu dulu..."
+  lyricBox.innerHTML="<div style='opacity:0.6'>tunggu dulu...</div>"
 
   fetch(s.lrc)
   .then(r=>r.text())
-  .then(text=>{
-    loadLrc(text)
-  })
+  .then(text=>loadLrc(text))
 }
 
 function back(){
   audio.pause()
+
   document.getElementById("menu").classList.remove("hide")
   document.getElementById("player").classList.add("hide")
 
-  document.getElementById("bg").style.background=
-    "url(bg.jpg) center/cover"
+  let bg=document.getElementById("bg")
+  bg.style.transform="scale(1)"
+  bg.style.background="url(bg.jpg) center/cover"
+
+  document.querySelector(".playbtn").innerText="▶"
 }
 
 function toggle(){
+  let btn=document.querySelector(".playbtn")
+
   if(audio.paused){
     audio.play()
+    btn.innerText="⏸"
   }else{
     audio.pause()
+    btn.innerText="▶"
   }
 }
 
@@ -268,34 +257,30 @@ audio.ontimeupdate=()=>{
   progress.value=(audio.currentTime/audio.duration)*100
 
   let lines=document.querySelectorAll(".line")
-  let currentTime=audio.currentTime
-
-  let activeLine=null
+  let current=audio.currentTime
+  let active=null
 
   lines.forEach(line=>{
     let time=parseFloat(line.dataset.time)
-    if(currentTime>=time){
-      activeLine=line
+    if(current>=time){
+      active=line
     }
   })
 
-  if(activeLine){
+  if(active){
     lines.forEach(l=>l.classList.remove("active"))
-    activeLine.classList.add("active")
-    activeLine.scrollIntoView({behavior:"smooth",block:"center"})
+    active.classList.add("active")
+    active.scrollIntoView({behavior:"smooth",block:"center"})
   }
 }
 
 function loadLrc(lrc){
   lyricBox.innerHTML=""
-  let lines=lrc.split("\n")
 
-  lines.forEach(line=>{
+  lrc.split("\n").forEach(line=>{
     let match=line.match(/\[(\d+):(\d+)\](.*)/)
     if(match){
-      let min=parseInt(match[1])
-      let sec=parseInt(match[2])
-      let time=min*60+sec
+      let time=parseInt(match[1])*60+parseInt(match[2])
       let text=match[3]
 
       let div=document.createElement("div")
