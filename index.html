@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +15,7 @@ body{
   overflow:hidden;
 }
 
-/* BG DINAMIS */
+/* BACKGROUND */
 #bg{
   position:fixed;
   inset:0;
@@ -38,7 +39,8 @@ body{
 
 /* MENU */
 .menu{
-  padding-top:80px;
+  padding-top:100px;
+  text-align:center;
 }
 
 .song{
@@ -49,7 +51,7 @@ body{
   background:rgba(255,255,255,0.1);
   padding:12px;
   border-radius:15px;
-  margin:10px;
+  margin:10px auto;
 }
 
 .song img{
@@ -60,6 +62,7 @@ body{
 /* PLAYER */
 .player{
   padding-top:70px;
+  text-align:center;
 }
 
 .cover{
@@ -80,8 +83,10 @@ body{
 /* CONTROL */
 .controls{
   position:absolute;
-  bottom:90px;
+  bottom:110px;
   width:80%;
+  left:50%;
+  transform:translateX(-50%);
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -123,16 +128,16 @@ button{
   <h2>welcome to my music</h2>
   <p>made with h4dzx & jejey</p>
 
-  <div class="song" onclick="playSong('sayang.mp3','Sayang','Shae','cover.jpg')">
-    <img src="cover.jpg">
+  <div class="song" onclick="playSong('lagu.mp3','Sayang','Shae','cover.png')">
+    <img src="cover.png">
     <div>
       <div>Sayang</div>
       <small>Shae</small>
     </div>
   </div>
 
-  <div class="song" onclick="playSong('hujan.mp3','Sedia Aku Sebelum Hujan','Ebiet G. Ade','cover2.jpg')">
-    <img src="cover2.jpg">
+  <div class="song" onclick="playSong('hujan.mp3','Sedia Aku Sebelum Hujan','Ebiet G. Ade','hujanpict.png')">
+    <img src="hujanpict.png">
     <div>
       <div>Sedia Aku Sebelum Hujan</div>
       <small>Ebiet G. Ade</small>
