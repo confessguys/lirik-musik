@@ -1,120 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{
+  margin:0;
+  font-family:sans-serif;
+  color:white;
+  overflow:hidden;
+}
 
-body{color:white;overflow:hidden}
-
-/* BG */
 #bg{
   position:fixed;
-  inset:0;
-  background:url('bg.jpg') center/cover no-repeat;
-  filter:blur(25px) brightness(0.4);
-  transform:scale(1.2);
+  width:100%;
+  height:100%;
+  background:url(bg.jpg) center/cover no-repeat;
+  filter:blur(20px) brightness(0.5);
   z-index:-1;
   transition:0.5s;
 }
 
-/* PAGE */
 .page{
-  position:absolute;
-  inset:0;
   display:flex;
   flex-direction:column;
   align-items:center;
+  justify-content:center;
+  height:100vh;
+  animation:fade 0.5s;
 }
-.hidden{display:none}
 
-/* MENU */
-.menu{padding-top:80px;text-align:center}
+.hide{display:none;}
 
-.song{
-  width:85%;
+@keyframes fade{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1}
+}
+
+h1{margin-bottom:5px;}
+.sub{opacity:0.7;margin-bottom:30px;}
+
+.card{
+  width:80%;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(10px);
+  padding:15px;
+  border-radius:15px;
   display:flex;
   align-items:center;
-  gap:10px;
-  background:rgba(255,255,255,0.1);
-  padding:12px;
-  border-radius:15px;
-  margin:10px auto;
+  margin:10px 0;
 }
 
-.song img{width:55px;border-radius:10px}
-
-/* PLAYER */
-.player{padding-top:60px;text-align:center}
+.card img{
+  width:50px;
+  height:50px;
+  border-radius:10px;
+  margin-right:10px;
+}
 
 .cover{
-  width:140px;
+  width:150px;
   border-radius:20px;
   margin-bottom:10px;
 }
 
-.title{font-size:20px}
-.artist{opacity:0.6;margin-bottom:10px}
-
-/* LYRICS (CENTER FIX) */
-.lyrics{
-  position:absolute;
-  top:45%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  width:90%;
+#lyric{
+  height:200px;
+  overflow:hidden;
   text-align:center;
+  margin-top:20px;
 }
 
-.lyrics p{
-  margin:6px 0;
-  opacity:0.4;
-  font-size:14px;
-  transform:scale(0.9);
+.line{
+  opacity:0.3;
   transition:0.3s;
+  transform:scale(0.95);
 }
 
-.lyrics p.active{
+.active{
   opacity:1;
   font-size:18px;
-  font-weight:bold;
-  transform:scale(1.1);
+  transform:scale(1);
 }
 
-/* CONTROL (NAIK) */
 .controls{
   position:absolute;
   bottom:120px;
   width:80%;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
 }
 
-#progress{width:100%}
+input[type=range]{
+  width:100%;
+}
 
-button{
+.playbtn{
+  position:absolute;
+  bottom:60px;
+  background:white;
+  color:black;
+  border-radius:50%;
   width:60px;
   height:60px;
-  border-radius:50%;
-  border:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-size:20px;
-  margin-bottom:10px;
 }
-
-/* BACK */
 .back{
   position:absolute;
   top:20px;
   left:20px;
   background:rgba(255,255,255,0.2);
-  border:none;
-  padding:5px 10px;
+  padding:10px;
   border-radius:10px;
-  color:white;
 }
 </style>
 </head>
@@ -124,138 +124,152 @@ button{
 <div id="bg"></div>
 
 <!-- MENU -->
-<div id="menu" class="page menu">
-  <h2>welcome to my music</h2>
-  <p>made with h4dzx & jejey</p>
+<div id="menu" class="page">
+  <h1>welcome to my music</h1>
+  <div class="sub">made with h4dzx & jejey</div>
 
-  <div class="song" onclick="playSong('lagu.mp3','Sayang','Shae','cover.png','lagu.lrc')">
+  <div class="card" onclick="playSong(0)">
     <img src="cover.png">
-    <div>Sayang<br><small>Shae</small></div>
+    <div>
+      <div>Sayang</div>
+      <small>Shae</small>
+    </div>
   </div>
 
-  <div class="song" onclick="playSong('hujan.mp3','Sedia Aku Sebelum Hujan','Ebiet G. Ade','hujanpict.png','hujan.lrc')">
+  <div class="card" onclick="playSong(1)">
     <img src="hujanpict.png">
-    <div>Sedia Aku Sebelum Hujan<br><small>Ebiet G. Ade</small></div>
+    <div>
+      <div>Sedia Aku Sebelum Hujan</div>
+      <small>Ebiet G. Ade</small>
+    </div>
   </div>
 </div>
 
 <!-- PLAYER -->
-<div id="player" class="page player hidden">
-  <button class="back" onclick="backMenu()">←</button>
+<div id="player" class="page hide">
 
-  <img id="cover" class="cover">
-  <div id="title" class="title"></div>
-  <div id="artist" class="artist"></div>
+<div class="back" onclick="back()">←</div>
 
-  <div id="lyrics" class="lyrics"></div>
+<img id="cover" class="cover" src="">
 
-  <div class="controls">
-    <button id="btn" onclick="togglePlay()">▶</button>
-    <input type="range" id="progress">
-  </div>
+<h2 id="title"></h2>
+<div id="artist" class="sub"></div>
 
-  <audio id="audio"></audio>
+<div id="lyric"></div>
+
+<div class="controls">
+  <input type="range" id="progress" value="0">
 </div>
 
+<div class="playbtn" onclick="toggle()">▶</div>
+
+</div>
+
+<audio id="audio"></audio>
+
 <script>
-const audio = document.getElementById("audio")
-const btn = document.getElementById("btn")
-const progress = document.getElementById("progress")
-const bg = document.getElementById("bg")
-const lyricsDiv = document.getElementById("lyrics")
+const songs=[
+{
+  title:"Sayang",
+  artist:"Shae",
+  src:"lagu.mp3",
+  cover:"cover.png",
+  lrc:`[00:05]Sayang apa kabar denganmu
+[00:10]Di sini ku merindukan kamu
+[00:15]Kuharap cintamu takkan berubah`
+},
+{
+  title:"Sedia Aku Sebelum Hujan",
+  artist:"Ebiet G. Ade",
+  src:"hujan.mp3",
+  cover:"hujanpict.png",
+  lrc:`[00:05]Tapi ku penuh saat kau teduh
+[00:10]Sudah paham kan sejauh ini
+[00:15]Ku yang lama di sini`
+}
+]
 
-let lyricsData = []
+let audio=document.getElementById("audio")
+let progress=document.getElementById("progress")
+let lyricBox=document.getElementById("lyric")
 
-function playSong(src,title,artist,cover,lrc){
-  menu.classList.add("hidden")
-  player.classList.remove("hidden")
+function playSong(i){
+  let s=songs[i]
 
-  audio.src = src
+  audio.pause()
+  audio.currentTime=0
+  audio.src=s.src
   audio.play()
 
-  titleEl.innerText = title
-  artistEl.innerText = artist
-  coverEl.src = cover
+  document.getElementById("title").innerText=s.title
+  document.getElementById("artist").innerText=s.artist
+  document.getElementById("cover").src=s.cover
 
-  // BG IKUT COVER
-  bg.style.background = `url('${cover}') center/cover no-repeat`
+  document.getElementById("bg").style.background=`url(${s.cover}) center/cover`
 
-  loadLRC(lrc)
+  lyricBox.innerHTML="<div class='line active'>tunggu dulu......</div>"
 
-  btn.innerText="⏸"
+  setTimeout(()=>{
+    loadLrc(s.lrc)
+  },1000)
+
+  document.getElementById("menu").classList.add("hide")
+  document.getElementById("player").classList.remove("hide")
 }
 
-function loadLRC(file){
-  fetch(file)
-  .then(r=>r.text())
-  .then(text=>{
-    lyricsData=[]
-    const lines=text.split("\n")
+function back(){
+  audio.pause()
+  document.getElementById("menu").classList.remove("hide")
+  document.getElementById("player").classList.add("hide")
+}
 
-    lines.forEach(line=>{
-      const match=line.match(/\[(\d+):(\d+\.\d+)\](.*)/)
-      if(match){
-        const time=parseInt(match[1])*60+parseFloat(match[2])
-        lyricsData.push({time,text:match[3]})
-      }
-    })
-  })
+function toggle(){
+  if(audio.paused){
+    audio.play()
+  }else{
+    audio.pause()
+  }
 }
 
 audio.ontimeupdate=()=>{
-  if(audio.duration){
-    progress.value=(audio.currentTime/audio.duration)*100
+  if(!audio.duration) return
+
+  progress.value=(audio.currentTime/audio.duration)*100
+
+  let lines=document.querySelectorAll(".line")
+  lines.forEach(l=>l.classList.remove("active"))
+
+  let current=Math.floor(audio.currentTime)
+  let el=document.getElementById("l"+current)
+  if(el){
+    el.classList.add("active")
+    el.scrollIntoView({behavior:"smooth",block:"center"})
   }
-
-  updateLyrics()
-}
-
-function updateLyrics(){
-  const current=audio.currentTime
-
-  lyricsData.forEach((l,i)=>{
-    if(current>=l.time){
-      lyricsDiv.innerHTML=""
-
-      for(let j=i-3;j<=i+3;j++){
-        if(lyricsData[j]){
-          const p=document.createElement("p")
-          p.innerText=lyricsData[j].text
-          if(j===i) p.classList.add("active")
-          lyricsDiv.appendChild(p)
-        }
-      }
-    }
-  })
 }
 
 progress.oninput=()=>{
-  if(audio.duration){
-    audio.currentTime=(progress.value/100)*audio.duration
-  }
+  audio.currentTime=(progress.value/100)*audio.duration
 }
 
-function togglePlay(){
-  audio.paused ? audio.play() : audio.pause()
+function loadLrc(lrc){
+  lyricBox.innerHTML=""
+  let lines=lrc.split("\n")
+
+  lines.forEach(line=>{
+    let match=line.match(/\[(\d+):(\d+)\](.*)/)
+    if(match){
+      let sec=parseInt(match[1])*60+parseInt(match[2])
+      let text=match[3]
+
+      let div=document.createElement("div")
+      div.className="line"
+      div.id="l"+sec
+      div.innerText=text
+
+      lyricBox.appendChild(div)
+    }
+  })
 }
-
-audio.onplay=()=>btn.innerText="⏸"
-audio.onpause=()=>btn.innerText="▶"
-
-function backMenu(){
-  audio.pause()
-  player.classList.add("hidden")
-  menu.classList.remove("hidden")
-
-  bg.style.background="url('bg.jpg') center/cover no-repeat"
-}
-
-/* shortcut */
-const menu=document.getElementById("menu")
-const player=document.getElementById("player")
-const titleEl=document.getElementById("title")
-const artistEl=document.getElementById("artist")
-const coverEl=document.getElementById("cover")
 </script>
 
 </body>
