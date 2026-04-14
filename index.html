@@ -6,92 +6,76 @@
 <title>Music</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
+
+body{
+  height:100vh;
+  overflow:hidden;
+  color:white;
 }
 
-body {
-  height: 100vh;
-  overflow: hidden;
-  color: white;
-}
-
-/* BACKGROUND BLUR */
-.bg {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: url('hadzx.jpg') center/cover no-repeat;
-  filter: blur(12px) brightness(0.4);
-  z-index: -1;
+/* BACKGROUND */
+.bg{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:url('./hadzx.jpg') center/cover no-repeat;
+  filter: blur(10px) brightness(0.4);
+  z-index:-1;
 }
 
 /* CONTAINER */
-.container {
-  text-align: center;
-  padding-top: 60px;
+.container{
+  text-align:center;
+  padding-top:60px;
 }
 
 /* COVER */
-.cover {
-  width: 130px;
-  height: 130px;
-  border-radius: 20px;
-  object-fit: cover;
-  margin-bottom: 15px;
-  animation: zoom 4s infinite alternate;
-}
-
-@keyframes zoom {
-  from { transform: scale(1); }
-  to { transform: scale(1.08); }
+.cover{
+  width:120px;
+  height:120px;
+  border-radius:20px;
+  object-fit:cover;
 }
 
 /* TEXT */
-.title {
-  font-size: 20px;
-  font-weight: bold;
+.title{
+  margin-top:10px;
+  font-size:20px;
+  font-weight:bold;
 }
 
-.artist {
-  font-size: 14px;
-  opacity: 0.7;
-  margin-bottom: 20px;
+.artist{
+  opacity:0.7;
+  font-size:14px;
 }
 
 /* LYRICS */
-.lyrics {
-  height: 180px;
-  overflow: hidden;
-  margin: 20px;
-  line-height: 1.8;
+.lyrics{
+  margin-top:20px;
+  height:200px;
+  overflow:hidden;
+  padding:0 20px;
 }
 
-.lyrics p {
-  opacity: 0.4;
-  transition: all 0.3s ease;
-  transform: translateY(10px);
+.lyrics p{
+  opacity:0.4;
+  transition:0.3s;
 }
 
-/* ACTIVE LIRIK */
-.lyrics .active {
-  opacity: 1;
-  color: #fff;
-  font-weight: bold;
-  text-shadow: 0 0 8px rgba(255,255,255,0.6);
-  transform: translateY(0);
+.lyrics .active{
+  opacity:1;
+  color:white;
+  font-weight:bold;
 }
 
 /* PLAYER */
-.controls {
-  margin-top: 20px;
+.controls{
+  margin-top:20px;
 }
 
-input[type=range] {
-  width: 80%;
+input[type=range]{
+  width:80%;
 }
 </style>
 </head>
@@ -102,17 +86,17 @@ input[type=range] {
 
 <div class="container">
 
-<img id="cover" src="cover.png" class="cover">
+<img src="./cover.png" class="cover">
 
-<div class="title" id="title">Judul Lagu</div>
-<div class="artist" id="artist">Artist</div>
+<div class="title">Music Player</div>
+<div class="artist">clone h4dxz</div>
 
 <div class="lyrics" id="lyrics"></div>
 
 <div class="controls">
-  <audio id="audio" src="lagu.mp3"></audio>
-  <button onclick="playPause()">⏯</button><br><br>
-  <input type="range" id="seek" value="0">
+  <audio id="audio" src="./lagu.mp3"></audio>
+  <button onclick="play()">▶</button><br><br>
+  <input type="range" id="seek">
 </div>
 
 </div>
@@ -122,63 +106,66 @@ const audio = document.getElementById("audio");
 const lyricsBox = document.getElementById("lyrics");
 const seek = document.getElementById("seek");
 
-let lirik = [];
+let lirik=[];
 
 /* LOAD LRC */
-fetch("lagu.lrc")
-.then(res => res.text())
-.then(text => {
-  let lines = text.split("\n");
+fetch("./lagu.lrc")
+.then(res=>res.text())
+.then(text=>{
+  let lines=text.split("\n");
 
-  lines.forEach(line => {
-    let match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+  lines.forEach(line=>{
+    let match=line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
     if(match){
-      let time = parseInt(match[1]) * 60 + parseFloat(match[2]);
-      let text = match[3];
-      lirik.push({time, text});
+      let time=parseInt(match[1])*60+parseFloat(match[2]);
+      let txt=match[3];
+      lirik.push({time,txt});
     }
   });
 
-  renderLyrics();
+  tampil();
 });
 
-function renderLyrics(){
-  lyricsBox.innerHTML = "";
-  lirik.forEach(l => {
-    let p = document.createElement("p");
-    p.innerText = l.text;
+/* TAMPIL */
+function tampil(){
+  lyricsBox.innerHTML="";
+  lirik.forEach(l=>{
+    let p=document.createElement("p");
+    p.innerText=l.txt;
     lyricsBox.appendChild(p);
   });
 }
 
 /* SYNC */
-audio.ontimeupdate = () => {
-  let current = audio.currentTime;
-  let items = lyricsBox.querySelectorAll("p");
+audio.ontimeupdate=()=>{
+  let current=audio.currentTime;
+  let items=lyricsBox.querySelectorAll("p");
 
-  lirik.forEach((l, i) => {
-    if(current >= l.time){
-      items.forEach(el => el.classList.remove("active"));
-      items[i].classList.add("active");
+  lirik.forEach((l,i)=>{
+    if(current>=l.time){
+      items.forEach(e=>e.classList.remove("active"));
+      if(items[i]){
+        items[i].classList.add("active");
 
-      // scroll smooth
-      lyricsBox.scrollTo({
-        top: items[i].offsetTop - 80,
-        behavior: "smooth"
-      });
+        lyricsBox.scrollTop = items[i].offsetTop - 80;
+      }
     }
   });
 
-  seek.value = (audio.currentTime / audio.duration) * 100;
+  if(audio.duration){
+    seek.value=(current/audio.duration)*100;
+  }
 };
 
 /* SEEK */
-seek.oninput = () => {
-  audio.currentTime = (seek.value / 100) * audio.duration;
+seek.oninput=()=>{
+  if(audio.duration){
+    audio.currentTime=(seek.value/100)*audio.duration;
+  }
 };
 
 /* PLAY */
-function playPause(){
+function play(){
   if(audio.paused) audio.play();
   else audio.pause();
 }
