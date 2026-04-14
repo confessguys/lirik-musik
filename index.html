@@ -11,7 +11,7 @@ body{
   overflow:hidden;
 }
 
-/* BG FIX */
+/* BG DINAMIS */
 #bg{
   position:fixed;
   inset:0;
@@ -19,9 +19,9 @@ body{
   filter:blur(25px) brightness(0.4);
   transform:scale(1.2);
   z-index:-1;
+  transition:0.5s;
 }
 
-/* PAGE */
 .page{
   position:absolute;
   inset:0;
@@ -71,16 +71,26 @@ body{
 /* LIRIK */
 .lyric{
   margin-top:20px;
-  width:80%;
+  width:85%;
   text-align:center;
-  opacity:0.7;
   font-size:14px;
+  line-height:22px;
 }
 
-/* CONTROL FIX (NAIKIN) */
+.line{
+  opacity:0.4;
+  transition:0.3s;
+}
+
+.active{
+  opacity:1;
+  font-size:16px;
+}
+
+/* CONTROL */
 .controls{
   position:absolute;
-  bottom:160px; /* ini dinaikin */
+  bottom:160px;
   width:80%;
   left:50%;
   transform:translateX(-50%);
@@ -102,7 +112,6 @@ button{
   margin-bottom:10px;
 }
 
-/* BACK */
 .back{
   position:absolute;
   top:20px;
@@ -125,12 +134,12 @@ button{
   <h2>welcome to my music</h2>
   <p>made with h4dzx & jejey</p>
 
-  <div class="song" onclick="playSong('lagu.mp3','Sayang','Shae','cover.png')">
+  <div class="song" onclick="playSong('lagu.mp3','Sayang','Shae','cover.png','lagu.lrc')">
     <img src="cover.png">
     <div>Sayang<br><small>Shae</small></div>
   </div>
 
-  <div class="song" onclick="playSong('hujan.mp3','Sedia Aku Sebelum Hujan','Ebiet G. Ade','hujanpict.png')">
+  <div class="song" onclick="playSong('hujan.mp3','Sedia Aku Sebelum Hujan','Ebiet G. Ade','hujanpict.png','hujan.lrc')">
     <img src="hujanpict.png">
     <div>Sedia Aku Sebelum Hujan<br><small>Ebiet G. Ade</small></div>
   </div>
@@ -144,8 +153,7 @@ button{
   <div id="title" class="title"></div>
   <div id="artist" class="artist"></div>
 
-  <!-- LIRIK SIMPLE -->
-  <div id="lyric" class="lyric">...</div>
+  <div id="lyrics" class="lyric"></div>
 
   <div class="controls">
     <button id="btn" onclick="togglePlay()">▶</button>
@@ -159,8 +167,12 @@ button{
 const audio = document.getElementById("audio")
 const btn = document.getElementById("btn")
 const progress = document.getElementById("progress")
+const bg = document.getElementById("bg")
+const lyricsDiv = document.getElementById("lyrics")
 
-function playSong(src,title,artist,cover){
+let lrcData = []
+
+function playSong(src,title,artist,cover,lrcFile){
   menu.classList.add("hidden")
   player.classList.remove("hidden")
 
@@ -171,10 +183,60 @@ function playSong(src,title,artist,cover){
   artistEl.innerText = artist
   coverEl.src = cover
 
-  // lirik dummy dulu
-  lyric.innerText = "lagi diputer..."
+  // 🔥 BG IKUT COVER
+  bg.style.background = `url('${cover}') center/cover no-repeat`
 
-  btn.innerText = "⏸"
+  loadLRC(lrcFile)
+
+  btn.innerText="⏸"
+}
+
+function loadLRC(file){
+  fetch(file)
+  .then(res=>res.text())
+  .then(text=>{
+    const lines = text.split("\n")
+    lrcData=[]
+    lyricsDiv.innerHTML=""
+
+    lines.forEach(line=>{
+      const match=line.match(/\[(\d+):(\d+\.\d+)\](.*)/)
+      if(match){
+        const time = parseInt(match[1])*60 + parseFloat(match[2])
+        const text = match[3]
+
+        lrcData.push({time,text})
+
+        const div=document.createElement("div")
+        div.className="line"
+        div.innerText=text
+        lyricsDiv.appendChild(div)
+      }
+    })
+  })
+}
+
+audio.ontimeupdate=()=>{
+  if(audio.duration){
+    progress.value = (audio.currentTime/audio.duration)*100
+  }
+
+  const lines = document.querySelectorAll(".line")
+
+  lrcData.forEach((l,i)=>{
+    if(audio.currentTime >= l.time){
+      lines.forEach(x=>x.classList.remove("active"))
+      if(lines[i]){
+        lines[i].classList.add("active")
+      }
+    }
+  })
+}
+
+progress.oninput=()=>{
+  if(audio.duration){
+    audio.currentTime=(progress.value/100)*audio.duration
+  }
 }
 
 function togglePlay(){
@@ -184,22 +246,13 @@ function togglePlay(){
 audio.onplay=()=>btn.innerText="⏸"
 audio.onpause=()=>btn.innerText="▶"
 
-audio.ontimeupdate=()=>{
-  if(audio.duration){
-    progress.value = (audio.currentTime/audio.duration)*100
-  }
-}
-
-progress.oninput=()=>{
-  if(audio.duration){
-    audio.currentTime = (progress.value/100)*audio.duration
-  }
-}
-
 function backMenu(){
   audio.pause()
   player.classList.add("hidden")
   menu.classList.remove("hidden")
+
+  // balik bg ke default
+  bg.style.background="url('bg.jpg') center/cover no-repeat"
 }
 
 /* shortcut */
@@ -208,7 +261,6 @@ const player=document.getElementById("player")
 const titleEl=document.getElementById("title")
 const artistEl=document.getElementById("artist")
 const coverEl=document.getElementById("cover")
-const lyric=document.getElementById("lyric")
 </script>
 
 </body>
